@@ -104,7 +104,7 @@
                                            class="btn btn-outline-primary" title="Просмотр">
                                             <i class="bi bi-eye"></i>
                                         </a>
-                                        <a href="{% url 'users:user_edit' user.id %}" 
+                                        <a href="{% url 'users:user_edit' user.id %}?next=users:user_list" 
                                            class="btn btn-outline-secondary" title="Редактировать">
                                             <i class="bi bi-pencil"></i>
                                         </a>

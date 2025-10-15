@@ -131,7 +131,14 @@ def user_edit_view(request, user_id):
         if form.is_valid():
             form.save()
             messages.success(request, f'Пользователь {user.email} успешно обновлен')
-            return redirect('users:user_detail', user_id=user.id)
+            # Перенаправляем на ту же страницу, откуда пришли
+            next_url = request.POST.get('next', request.GET.get('next', 'users:user_detail'))
+            if next_url == 'users:user_detail':
+                return redirect('users:user_detail', user_id=user.id)
+            elif next_url == 'users:user_list':
+                return redirect('users:user_list')
+            else:
+                return redirect(next_url)
     else:
         form = UserEditForm(instance=user)
     

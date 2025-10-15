@@ -90,7 +90,7 @@ class UserEditForm(forms.ModelForm):
     
     class Meta:
         model = User
-        fields = ['email', 'first_name', 'last_name', 'role', 'is_active']
+        fields = ['email', 'first_name', 'last_name', 'role']
         widgets = {
             'email': forms.EmailInput(attrs={
                 'class': 'form-control',
@@ -104,15 +104,11 @@ class UserEditForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Введите фамилию'
             }),
-            'is_active': forms.CheckboxInput(attrs={
-                'class': 'form-check-input'
-            }),
         }
         labels = {
             'email': 'Email',
             'first_name': 'Имя',
             'last_name': 'Фамилия',
-            'is_active': 'Активен',
         }
     
     def clean_email(self):

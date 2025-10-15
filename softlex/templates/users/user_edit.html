@@ -26,6 +26,9 @@
             <div class="card-body">
                 <form method="post">
                     {% csrf_token %}
+                    {% if request.GET.next %}
+                        <input type="hidden" name="next" value="{{ request.GET.next }}">
+                    {% endif %}
                     
                     <div class="row">
                         <div class="col-md-6">
@@ -95,24 +98,6 @@
                         </div>
                     </div>
                     
-                    <div class="mb-3">
-                        <div class="form-check">
-                            {{ form.is_active }}
-                            <label class="form-check-label" for="{{ form.is_active.id_for_label }}">
-                                {{ form.is_active.label }}
-                            </label>
-                        </div>
-                        {% if form.is_active.errors %}
-                            <div class="text-danger">
-                                {% for error in form.is_active.errors %}
-                                    <small>{{ error }}</small>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                        <div class="form-text">
-                            Отключение этого параметра заблокирует пользователя
-                        </div>
-                    </div>
                     
                     {% if form.non_field_errors %}
                         <div class="alert alert-danger">
@@ -127,7 +112,7 @@
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-check"></i> Сохранить изменения
                             </button>
-                            <a href="{% url 'users:user_detail' user_obj.id %}" class="btn btn-outline-secondary">
+                            <a href="{% if request.GET.next == 'users:user_list' %}{% url 'users:user_list' %}{% else %}{% url 'users:user_detail' user_obj.id %}{% endif %}" class="btn btn-outline-secondary">
                                 <i class="bi bi-x"></i> Отмена
                             </a>
                         </div>
