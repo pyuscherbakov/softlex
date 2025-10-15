@@ -159,14 +159,12 @@ def user_toggle_block_view(request, user_id):
         return redirect('users:user_list')
     
     # Переключаем статус блокировки
-    if user.role == 'blocked':
-        user.role = 'user'
-        user.is_active = True
-        action = 'разблокирован'
-    else:
-        user.role = 'blocked'
+    if user.is_active:
         user.is_active = False
         action = 'заблокирован'
+    else:
+        user.is_active = True
+        action = 'разблокирован'
     
     user.save()
     messages.success(request, f'Пользователь {user.email} {action}')

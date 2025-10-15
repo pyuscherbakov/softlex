@@ -74,6 +74,20 @@ class RegistrationForm(UserCreationForm):
 class UserEditForm(forms.ModelForm):
     """Форма редактирования пользователя"""
     
+    # исключаем заблокированных пользователей
+    ROLE_CHOICES = [
+        ('admin', 'Администратор'),
+        ('user', 'Пользователь'),
+    ]
+    
+    role = forms.ChoiceField(
+        choices=ROLE_CHOICES,
+        widget=forms.Select(attrs={
+            'class': 'form-control'
+        }),
+        label='Роль'
+    )
+    
     class Meta:
         model = User
         fields = ['email', 'first_name', 'last_name', 'role', 'is_active']
@@ -90,9 +104,6 @@ class UserEditForm(forms.ModelForm):
                 'class': 'form-control',
                 'placeholder': 'Введите фамилию'
             }),
-            'role': forms.Select(attrs={
-                'class': 'form-control'
-            }),
             'is_active': forms.CheckboxInput(attrs={
                 'class': 'form-check-input'
             }),
@@ -101,7 +112,6 @@ class UserEditForm(forms.ModelForm):
             'email': 'Email',
             'first_name': 'Имя',
             'last_name': 'Фамилия',
-            'role': 'Роль',
             'is_active': 'Активен',
         }
     
@@ -111,3 +121,4 @@ class UserEditForm(forms.ModelForm):
         if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
             raise forms.ValidationError('Пользователь с таким email уже существует')
         return email
+    

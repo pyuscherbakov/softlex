@@ -110,10 +110,10 @@
                                         </a>
                                         {% if user != request.user %}
                                             <button type="button" 
-                                                    class="btn btn-outline-{% if user.role == 'blocked' %}success{% else %}danger{% endif %}" 
-                                                    title="{% if user.role == 'blocked' %}Разблокировать{% else %}Заблокировать{% endif %}"
-                                                    onclick="toggleUserBlock({{ user.id }}, '{{ user.role }}', '{{ user.email }}')">
-                                                <i class="bi bi-{% if user.role == 'blocked' %}unlock{% else %}lock{% endif %}"></i>
+                                                    class="btn btn-outline-{% if not user.is_active %}success{% else %}danger{% endif %}" 
+                                                    title="{% if not user.is_active %}Разблокировать{% else %}Заблокировать{% endif %}"
+                                                    onclick="toggleUserBlock({{ user.id }}, '{{ user.is_active|yesno:"true,false" }}', '{{ user.email }}')">
+                                                <i class="bi bi-{% if not user.is_active %}unlock{% else %}lock{% endif %}"></i>
                                             </button>
                                         {% endif %}
                                     </div>
@@ -191,8 +191,8 @@
 </style>
 
 <script>
-function toggleUserBlock(userId, currentRole, userEmail) {
-    const action = currentRole === 'blocked' ? 'разблокировать' : 'заблокировать';
+function toggleUserBlock(userId, isActive, userEmail) {
+    const action = isActive === 'false' ? 'разблокировать' : 'заблокировать';
     
     if (confirm(`Вы уверены, что хотите ${action} пользователя ${userEmail}?`)) {
         // Создаем скрытую форму для отправки POST-запроса

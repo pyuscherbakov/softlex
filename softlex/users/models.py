@@ -33,7 +33,6 @@ class User(AbstractUser):
     ROLE_CHOICES = [
         ('admin', 'Администратор'),
         ('user', 'Пользователь'),
-        ('blocked', 'Заблокированный'),
     ]
     
     email = models.EmailField(unique=True, verbose_name='Email')
@@ -71,4 +70,4 @@ class User(AbstractUser):
     
     @property
     def is_blocked(self):
-        return self.role == 'blocked'
+        return not self.is_active
