@@ -9,12 +9,16 @@
         <p class="text-muted">{{ project.description }}</p>
     </div>
     <div>
+        {% if user.is_admin or project.created_by == user %}
         <a href="{% url 'testcases:project_edit' project.pk %}" class="btn btn-outline-secondary me-2">
             <i class="bi bi-pencil"></i> Редактировать проект
         </a>
+        {% endif %}
+        {% if user.is_admin or project.created_by == user or user_role == 'editor' or user_role == 'admin' %}
         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#testcaseModal">
             <i class="bi bi-plus"></i> Добавить тест-кейс
         </button>
+        {% endif %}
         <a href="{% url 'testcases:project_list' %}" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left"></i> Назад к проектам
         </a>
@@ -56,12 +60,14 @@
                                                 <a href="{% url 'testcases:testcase_detail' test_case.pk %}" class="btn btn-outline-primary">
                                                     <i class="bi bi-eye"></i>
                                                 </a>
+                                                {% if user.is_admin or project.created_by == user or user_role == 'editor' or user_role == 'admin' %}
                                                 <a href="{% url 'testcases:testcase_edit' test_case.pk %}" class="btn btn-outline-secondary">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
                                                 <a href="{% url 'testcases:testcase_delete' test_case.pk %}" class="btn btn-outline-danger">
                                                     <i class="bi bi-trash"></i>
                                                 </a>
+                                                {% endif %}
                                             </div>
                                         </td>
                                     </tr>

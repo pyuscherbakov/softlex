@@ -99,3 +99,49 @@ class TestCase(models.Model):
     
     def __str__(self):
         return self.title
+
+
+class ProjectMember(models.Model):
+    """Модель для управления доступом к проектам"""
+    
+    ROLE_CHOICES = [
+        ('viewer', 'Наблюдатель'),
+        ('editor', 'Редактор'),
+        ('admin', 'Администратор'),
+    ]
+    
+    project = models.ForeignKey(
+        Project, 
+        on_delete=models.CASCADE, 
+        related_name='members',
+        verbose_name='Проект'
+    )
+    user = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE, 
+        related_name='project_memberships',
+        verbose_name='Пользователь'
+    )
+    role = models.CharField(
+        max_length=10, 
+        choices=ROLE_CHOICES, 
+        verbose_name='Роль'
+    )
+    added_at = models.DateTimeField(auto_now_add=True, verbose_name='Добавлен')
+    added_by = models.ForeignKey(
+        User, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        related_name='added_members',
+        verbose_name='Добавлен пользователем'
+    )
+    
+    class Meta:
+        verbose_name = 'Участник проекта'
+        verbose_name_plural = 'Участники проектов'
+        unique_together = ('project', 'user')
+        ordering = ['-added_at']
+    
+    def __str__(self):
+        return f"{self.user.email} - {self.project.name} ({self.get_role_display()})"

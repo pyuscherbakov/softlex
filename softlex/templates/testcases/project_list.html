@@ -83,6 +83,43 @@
                             </div>
                         {% endif %}
                     </div>
+                    
+                    <!-- Секция управления доступом -->
+                    <div class="mb-3">
+                        <h6 class="mb-3"><i class="bi bi-people"></i> Управление доступом</h6>
+                        <div class="card">
+                            <div class="card-body">
+                                <div id="members-container">
+                                    <!-- Участники будут добавлены через JavaScript -->
+                                </div>
+                                <div class="mt-3">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <select class="form-select" id="user-select">
+                                                <option value="">Выберите пользователя...</option>
+                                                {% for user in all_users %}
+                                                    <option value="{{ user.id }}" data-email="{{ user.email }}">{{ user.email }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select class="form-select" id="role-select">
+                                                <option value="viewer">Наблюдатель</option>
+                                                <option value="editor">Редактор</option>
+                                                <option value="admin">Администратор</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="button" class="btn btn-outline-primary btn-sm" id="add-member-btn">
+                                                <i class="bi bi-plus"></i> Добавить
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                {{ form.members_data }}
+                            </div>
+                        </div>
+                    </div>
                     {% if form.non_field_errors %}
                         <div class="alert alert-danger">
                             {% for error in form.non_field_errors %}
@@ -103,6 +140,121 @@
 
 {% block extra_js %}
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const membersContainer = document.getElementById('members-container');
+    const addMemberBtn = document.getElementById('add-member-btn');
+    const userSelect = document.getElementById('user-select');
+    const roleSelect = document.getElementById('role-select');
+    const membersDataField = document.getElementById('id_members_data');
+    
+    let membersData = [];
+    
+    // Загружаем существующих участников
+    if (membersDataField && membersDataField.value) {
+        try {
+            membersData = JSON.parse(membersDataField.value);
+        } catch (e) {
+            console.error('Ошибка парсинга данных участников:', e);
+        }
+    }
+    
+    // Рендерим участников
+    function renderMembers() {
+        if (!membersContainer) return;
+        
+        membersContainer.innerHTML = '';
+        
+        membersData.forEach((member, index) => {
+            const memberDiv = document.createElement('div');
+            memberDiv.className = 'row mb-2 align-items-center';
+            memberDiv.innerHTML = `
+                <div class="col-md-4">
+                    <input type="text" class="form-control" value="${member.user_email}" 
+                           placeholder="Email пользователя" readonly>
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select role-select">
+                        <option value="viewer" ${member.role === 'viewer' ? 'selected' : ''}>Наблюдатель</option>
+                        <option value="editor" ${member.role === 'editor' ? 'selected' : ''}>Редактор</option>
+                        <option value="admin" ${member.role === 'admin' ? 'selected' : ''}>Администратор</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-outline-danger btn-sm remove-member" style="width: 40px; height: 32px; display: flex; align-items: center; justify-content: center; padding: 0;" data-index="${index}">
+                        <i class="bi bi-trash" style="margin: 0;"></i>
+                    </button>
+                </div>
+            `;
+            membersContainer.appendChild(memberDiv);
+        });
+        
+        updateMembersData();
+    }
+    
+    // Обновляем скрытое поле с данными участников
+    function updateMembersData() {
+        if (membersDataField) {
+            membersDataField.value = JSON.stringify(membersData);
+        }
+    }
+    
+    // Добавление нового участника
+    if (addMemberBtn) {
+        addMemberBtn.addEventListener('click', function() {
+            const selectedUserId = userSelect.value;
+            const selectedRole = roleSelect.value;
+            
+            if (!selectedUserId) {
+                alert('Выберите пользователя');
+                return;
+            }
+            
+            const selectedUserEmail = userSelect.options[userSelect.selectedIndex].dataset.email;
+            
+            // Проверяем, что пользователь не добавлен уже
+            if (!membersData.some(m => m.user_id == selectedUserId)) {
+                membersData.push({
+                    user_id: parseInt(selectedUserId),
+                    user_email: selectedUserEmail,
+                    role: selectedRole
+                });
+                renderMembers();
+                
+                // Очищаем выбор
+                userSelect.value = '';
+                roleSelect.value = 'viewer';
+            } else {
+                alert('Этот пользователь уже добавлен');
+            }
+        });
+    }
+    
+    // Удаление участника
+    if (membersContainer) {
+        membersContainer.addEventListener('click', function(e) {
+            if (e.target.closest('.remove-member')) {
+                const index = parseInt(e.target.closest('.remove-member').dataset.index);
+                membersData.splice(index, 1);
+                renderMembers();
+            }
+        });
+    }
+    
+    // Изменение роли
+    if (membersContainer) {
+        membersContainer.addEventListener('change', function(e) {
+            if (e.target.classList.contains('role-select')) {
+                const index = parseInt(e.target.closest('.row').querySelector('.remove-member').dataset.index);
+                membersData[index].role = e.target.value;
+                updateMembersData();
+            }
+        });
+    }
+    
+    // Инициализация
+    renderMembers();
+});
+
 function editProject(projectId) {
     // TODO: Реализовать редактирование проекта
     console.log('Edit project:', projectId);
