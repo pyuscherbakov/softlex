@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ user_obj.email }} - Softlex{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-person"></i> Информация о пользователе</h2>
+    <div class="btn-group">
+        <a href="{% url 'users:user_edit' user_obj.id %}" class="btn btn-primary">
+            <i class="bi bi-pencil"></i> Редактировать
+        </a>
+        <a href="{% url 'users:user_list' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Назад к списку
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-person-circle"></i> Основная информация
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-sm-3">
+                        <strong>Email:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        {{ user_obj.email }}
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-sm-3">
+                        <strong>Имя:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        {% if user_obj.first_name %}
+                            {{ user_obj.first_name }}
+                        {% else %}
+                            <span class="text-muted">Не указано</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-sm-3">
+                        <strong>Фамилия:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        {% if user_obj.last_name %}
+                            {{ user_obj.last_name }}
+                        {% else %}
+                            <span class="text-muted">Не указано</span>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-sm-3">
+                        <strong>Роль:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        <span class="badge 
+                            {% if user_obj.role == 'admin' %}bg-danger
+                            {% elif user_obj.role == 'user' %}bg-success
+                            {% elif user_obj.role == 'blocked' %}bg-secondary
+                            {% endif %} fs-6">
+                            {{ user_obj.get_role_display }}
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-sm-3">
+                        <strong>Статус:</strong>
+                    </div>
+                    <div class="col-sm-9">
+                        {% if user_obj.is_active %}
+                            <span class="badge bg-success fs-6">Активен</span>
+                        {% else %}
+                            <span class="badge bg-danger fs-6">Заблокирован</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-calendar"></i> Даты
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <strong>Дата регистрации:</strong><br>
+                    <small class="text-muted">
+                        {{ user_obj.date_joined|date:"d.m.Y H:i" }}
+                    </small>
+                </div>
+                
+                <div class="mb-3">
+                    <strong>Последняя авторизация:</strong><br>
+                    {% if user_obj.last_login_date %}
+                        <small class="text-muted">
+                            {{ user_obj.last_login_date|date:"d.m.Y H:i" }}
+                        </small>
+                    {% else %}
+                        <span class="text-muted">Никогда</span>
+                    {% endif %}
+                </div>
+                
+                {% if user_obj.last_login %}
+                    <div class="mb-3">
+                        <strong>Последний вход (система):</strong><br>
+                        <small class="text-muted">
+                            {{ user_obj.last_login|date:"d.m.Y H:i" }}
+                        </small>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if user_obj != request.user %}
+            <div class="card mt-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-shield-exclamation"></i> Управление
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'users:user_toggle_block' user_obj.id %}" 
+                          onsubmit="return confirm('Вы уверены, что хотите {% if user_obj.role == 'blocked' %}разблокировать{% else %}заблокировать{% endif %} этого пользователя?')">
+                        {% csrf_token %}
+                        <button type="submit" 
+                                class="btn btn-{% if user_obj.role == 'blocked' %}success{% else %}warning{% endif %} w-100">
+                            <i class="bi bi-{% if user_obj.role == 'blocked' %}unlock{% else %}lock{% endif %}"></i>
+                            {% if user_obj.role == 'blocked' %}Разблокировать{% else %}Заблокировать{% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

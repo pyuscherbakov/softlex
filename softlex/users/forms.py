@@ -69,3 +69,45 @@ class RegistrationForm(UserCreationForm):
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError('Пользователь с таким email уже существует')
         return email
+
+
+class UserEditForm(forms.ModelForm):
+    """Форма редактирования пользователя"""
+    
+    class Meta:
+        model = User
+        fields = ['email', 'first_name', 'last_name', 'role', 'is_active']
+        widgets = {
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Введите email'
+            }),
+            'first_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Введите имя'
+            }),
+            'last_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Введите фамилию'
+            }),
+            'role': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+            'is_active': forms.CheckboxInput(attrs={
+                'class': 'form-check-input'
+            }),
+        }
+        labels = {
+            'email': 'Email',
+            'first_name': 'Имя',
+            'last_name': 'Фамилия',
+            'role': 'Роль',
+            'is_active': 'Активен',
+        }
+    
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        # Проверяем, что email уникален, исключая текущего пользователя
+        if User.objects.filter(email=email).exclude(pk=self.instance.pk).exists():
+            raise forms.ValidationError('Пользователь с таким email уже существует')
+        return email

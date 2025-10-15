@@ -21,6 +21,13 @@
                             <i class="bi bi-list-check"></i> Тест-кейсы
                         </a>
                     </li>
+                    {% if user.is_admin %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'users:user_list' %}">
+                                <i class="bi bi-people"></i> Пользователи
+                            </a>
+                        </li>
+                    {% endif %}
                 </ul>
                 
                 <ul class="navbar-nav">

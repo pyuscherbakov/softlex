@@ -44,6 +44,11 @@ class User(AbstractUser):
         verbose_name='Роль'
     )
     is_active = models.BooleanField(default=True, verbose_name='Активен')
+    last_login_date = models.DateTimeField(
+        null=True, 
+        blank=True, 
+        verbose_name='Дата последней авторизации'
+    )
     
     # Убираем username, используем email
     username = None
