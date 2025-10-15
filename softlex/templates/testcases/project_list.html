@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+
+{% block title %}Проекты - Softlex{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-folder"></i> Мои проекты</h2>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#projectModal">
+        <i class="bi bi-plus"></i> Создать проект
+    </button>
+</div>
+
+{% if projects %}
+    <div class="row">
+        {% for project in projects %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ project.name }}</h5>
+                        <p class="card-text">{{ project.description|truncatewords:20 }}</p>
+                        <small class="text-muted">
+                            <i class="bi bi-calendar"></i> {{ project.created_at|date:"d.m.Y H:i" }}
+                        </small>
+                    </div>
+                    <div class="card-footer">
+                        <div class="btn-group w-100" role="group">
+                            <a href="{% url 'testcases:project_detail' project.pk %}" class="btn btn-outline-primary btn-sm">
+                                <i class="bi bi-eye"></i> Просмотр
+                            </a>
+                            <a href="{% url 'testcases:project_edit' project.pk %}" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-pencil"></i> Редактировать
+                            </a>
+                            <a href="{% url 'testcases:project_delete' project.pk %}" class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-trash"></i> Удалить
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-folder display-1 text-muted"></i>
+        <h4 class="text-muted mt-3">У вас пока нет проектов</h4>
+        <p class="text-muted">Создайте первый проект, чтобы начать работу с тест-кейсами</p>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#projectModal">
+            <i class="bi bi-plus"></i> Создать проект
+        </button>
+    </div>
+{% endif %}
+
+<!-- Модальное окно для создания/редактирования проекта -->
+<div class="modal fade" id="projectModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="projectModalTitle">Создать проект</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="projectForm" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="{{ form.name.id_for_label }}" class="form-label">{{ form.name.label }}</label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                            <div class="text-danger">
+                                {% for error in form.name.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }}</label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <div class="text-danger">
+                                {% for error in form.description.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function editProject(projectId) {
+    // TODO: Реализовать редактирование проекта
+    console.log('Edit project:', projectId);
+}
+
+function deleteProject(projectId) {
+    if (confirm('Вы уверены, что хотите удалить этот проект?')) {
+        // TODO: Реализовать удаление проекта
+        console.log('Delete project:', projectId);
+    }
+}
+</script>
+{% endblock %}

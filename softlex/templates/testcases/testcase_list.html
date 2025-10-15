@@ -1,0 +1,189 @@
+{% extends 'base.html' %}
+
+{% block title %}Тест-кейсы - Softlex{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="bi bi-list-check"></i> Мои тест-кейсы</h2>
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#testcaseModal">
+        <i class="bi bi-plus"></i> Создать тест-кейс
+    </button>
+</div>
+
+{% if test_cases %}
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Проект</th>
+                            <th>Описание</th>
+                            <th>Создан</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for test_case in test_cases %}
+                            <tr>
+                                <td>
+                                    <strong>{{ test_case.title }}</strong>
+                                </td>
+                                <td>
+                                    <span class="badge bg-primary">{{ test_case.project.name }}</span>
+                                </td>
+                                <td>{{ test_case.description|truncatewords:10 }}</td>
+                                <td>
+                                    <small class="text-muted">
+                                        {{ test_case.created_at|date:"d.m.Y H:i" }}
+                                    </small>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{% url 'testcases:testcase_detail' test_case.pk %}" class="btn btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{% url 'testcases:testcase_edit' test_case.pk %}" class="btn btn-outline-secondary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <a href="{% url 'testcases:testcase_delete' test_case.pk %}" class="btn btn-outline-danger">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-list-check display-1 text-muted"></i>
+        <h4 class="text-muted mt-3">У вас пока нет тест-кейсов</h4>
+        <p class="text-muted">Создайте первый тест-кейс, чтобы начать работу</p>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#testcaseModal">
+            <i class="bi bi-plus"></i> Создать тест-кейс
+        </button>
+    </div>
+{% endif %}
+
+<!-- Модальное окно для создания/редактирования тест-кейса -->
+<div class="modal fade" id="testcaseModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="testcaseModalTitle">Создать тест-кейс</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="testcaseForm" method="post">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.title.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.project.id_for_label }}" class="form-label">{{ form.project.label }}</label>
+                            {{ form.project }}
+                            {% if form.project.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.project.errors %}
+                                        <small>{{ error }}</small>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }}</label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <div class="text-danger">
+                                {% for error in form.description.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.preconditions.id_for_label }}" class="form-label">{{ form.preconditions.label }}</label>
+                        {{ form.preconditions }}
+                        {% if form.preconditions.errors %}
+                            <div class="text-danger">
+                                {% for error in form.preconditions.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.steps.id_for_label }}" class="form-label">{{ form.steps.label }}</label>
+                        {{ form.steps }}
+                        {% if form.steps.errors %}
+                            <div class="text-danger">
+                                {% for error in form.steps.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.expected_result.id_for_label }}" class="form-label">{{ form.expected_result.label }}</label>
+                        {{ form.expected_result }}
+                        {% if form.expected_result.errors %}
+                            <div class="text-danger">
+                                {% for error in form.expected_result.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function viewTestCase(testCaseId) {
+    // TODO: Реализовать просмотр тест-кейса
+    console.log('View test case:', testCaseId);
+}
+
+function editTestCase(testCaseId) {
+    // TODO: Реализовать редактирование тест-кейса
+    console.log('Edit test case:', testCaseId);
+}
+
+function deleteTestCase(testCaseId) {
+    if (confirm('Вы уверены, что хотите удалить этот тест-кейс?')) {
+        // TODO: Реализовать удаление тест-кейса
+        console.log('Delete test case:', testCaseId);
+    }
+}
+</script>
+{% endblock %}

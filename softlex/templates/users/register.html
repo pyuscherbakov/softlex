@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Регистрация - Softlex{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+        <div class="card shadow">
+            <div class="card-header text-center">
+                <h4><i class="bi bi-person-plus"></i> Регистрация</h4>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.email.id_for_label }}" class="form-label">{{ form.email.label }}</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="text-danger">
+                                {% for error in form.email.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.password1.id_for_label }}" class="form-label">{{ form.password1.label }}</label>
+                        {{ form.password1 }}
+                        {% if form.password1.errors %}
+                            <div class="text-danger">
+                                {% for error in form.password1.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.password2.id_for_label }}" class="form-label">{{ form.password2.label }}</label>
+                        {{ form.password2 }}
+                        {% if form.password2.errors %}
+                            <div class="text-danger">
+                                {% for error in form.password2.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                <small>{{ error }}</small>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-person-plus"></i> Зарегистрироваться
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <small class="text-muted">
+                    Уже есть аккаунт? <a href="{% url 'users:login' %}">Войти</a>
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

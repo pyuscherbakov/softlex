@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная - Softlex{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="jumbotron bg-light p-5 rounded">
+            <h1 class="display-4">
+                <i class="bi bi-clipboard-check text-primary"></i> 
+                Добро пожаловать в Softlex
+            </h1>
+            <p class="lead">Простая и надежная система управления тестированием</p>
+            <hr class="my-4">
+            
+            {% if user.is_authenticated %}
+                <p>Привет, {{ user.email }}! Выберите действие:</p>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="bi bi-folder display-1 text-primary"></i>
+                                <h5 class="card-title">Проекты</h5>
+                                <p class="card-text">Управляйте проектами и их тест-кейсами</p>
+                                <a href="{% url 'testcases:project_list' %}" class="btn btn-primary">
+                                    <i class="bi bi-folder"></i> Перейти к проектам
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100">
+                            <div class="card-body text-center">
+                                <i class="bi bi-list-check display-1 text-success"></i>
+                                <h5 class="card-title">Тест-кейсы</h5>
+                                <p class="card-text">Просматривайте и редактируйте тест-кейсы</p>
+                                <a href="{% url 'testcases:testcase_list' %}" class="btn btn-success">
+                                    <i class="bi bi-list-check"></i> Перейти к тест-кейсам
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <p>Для начала работы войдите в систему или зарегистрируйтесь</p>
+                <a class="btn btn-primary btn-lg" href="{% url 'users:login' %}" role="button">
+                    <i class="bi bi-box-arrow-in-right"></i> Войти
+                </a>
+                <a class="btn btn-outline-primary btn-lg" href="{% url 'users:register' %}" role="button">
+                    <i class="bi bi-person-plus"></i> Регистрация
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
