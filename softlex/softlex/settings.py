@@ -86,25 +86,17 @@ WSGI_APPLICATION = 'softlex.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# Для разработки используем SQLite, для продакшена - PostgreSQL
-if env('DEBUG', default=True):
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+# Используем PostgreSQL для всех окружений
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('POSTGRES_DB', default='sftlx'),
+        'USER': env('POSTGRES_USER', default='admin'),
+        'PASSWORD': env('POSTGRES_PASSWORD', default='password'),
+        'HOST': env('POSTGRES_HOST', default='db'),
+        'PORT': env('POSTGRES_PORT', default='5432'),
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': env('POSTGRES_DB', default='sftlx'),
-            'USER': env('POSTGRES_USER', default='admin'),
-            'PASSWORD': env('POSTGRES_PASSWORD', default='password'),
-            'HOST': env('POSTGRES_HOST', default='localhost'),
-            'PORT': env('POSTGRES_PORT', default='5432'),
-        }
-    }
+}
 
 
 # Password validation
