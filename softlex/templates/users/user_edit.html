@@ -1,44 +1,87 @@
 {% extends 'base.html' %}
 
 {% block title %}Редактирование пользователя - Softlex{% endblock %}
+{% block meta_description %}Редактирование профиля пользователя {{ user_obj.email }} в Softlex. Изменение информации, роли и настроек пользователя.{% endblock %}
+
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'testcases:home' %}">
+                <i class="bi bi-house"></i> Главная
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'users:user_list' %}">
+                <i class="bi bi-people"></i> Пользователи
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'users:user_detail' user_obj.id %}">
+                <i class="bi bi-person"></i> {{ user_obj.email }}
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="bi bi-pencil"></i> Редактирование
+        </li>
+    </ol>
+</nav>
+{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="bi bi-pencil"></i> Редактирование пользователя</h2>
-    <div class="btn-group">
-        <a href="{% url 'users:user_detail' user_obj.id %}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Назад
-        </a>
-        <a href="{% url 'users:user_list' %}" class="btn btn-outline-secondary">
-            <i class="bi bi-list"></i> К списку
-        </a>
+<!-- Header Section -->
+<div class="page-header mb-5">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="page-title">
+                <i class="bi bi-pencil text-primary me-3"></i>
+                Редактирование пользователя
+            </h1>
+            <p class="page-subtitle text-muted">
+                Изменение информации и настроек пользователя {{ user_obj.email }}
+            </p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <div class="btn-group">
+                <a href="{% url 'users:user_detail' user_obj.id %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i> Назад
+                </a>
+                <a href="{% url 'users:user_list' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-list me-2"></i> К списку
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 
 <div class="row justify-content-center">
-    <div class="col-md-8">
-        <div class="card">
+    <div class="col-lg-8">
+        <!-- Main Form Card -->
+        <div class="card mb-4">
             <div class="card-header">
                 <h5 class="card-title mb-0">
-                    <i class="bi bi-person-gear"></i> Редактирование: {{ user_obj.email }}
+                    <i class="bi bi-person-gear text-primary me-2"></i>
+                    Редактирование: {{ user_obj.email }}
                 </h5>
             </div>
             <div class="card-body">
-                <form method="post">
+                <form method="post" class="needs-validation" novalidate>
                     {% csrf_token %}
                     {% if request.GET.next %}
                         <input type="hidden" name="next" value="{{ request.GET.next }}">
                     {% endif %}
                     
-                    <div class="row">
+                    <!-- Basic Information -->
+                    <div class="row g-4 mb-4">
                         <div class="col-md-6">
-                            <div class="mb-3">
+                            <div class="form-group">
                                 <label for="{{ form.email.id_for_label }}" class="form-label">
+                                    <i class="bi bi-envelope me-2 text-muted"></i>
                                     {{ form.email.label }} <span class="text-danger">*</span>
                                 </label>
                                 {{ form.email }}
                                 {% if form.email.errors %}
-                                    <div class="text-danger">
+                                    <div class="invalid-feedback d-block">
                                         {% for error in form.email.errors %}
                                             <div><small>{{ error }}</small></div>
                                         {% endfor %}
@@ -48,13 +91,14 @@
                         </div>
                         
                         <div class="col-md-6">
-                            <div class="mb-3">
+                            <div class="form-group">
                                 <label for="{{ form.role.id_for_label }}" class="form-label">
+                                    <i class="bi bi-shield-check me-2 text-muted"></i>
                                     {{ form.role.label }} <span class="text-danger">*</span>
                                 </label>
                                 {{ form.role }}
                                 {% if form.role.errors %}
-                                    <div class="text-danger">
+                                    <div class="invalid-feedback d-block">
                                         {% for error in form.role.errors %}
                                             <div><small>{{ error }}</small></div>
                                         {% endfor %}
@@ -64,15 +108,17 @@
                         </div>
                     </div>
                     
-                    <div class="row">
+                    <!-- Personal Information -->
+                    <div class="row g-4 mb-4">
                         <div class="col-md-6">
-                            <div class="mb-3">
+                            <div class="form-group">
                                 <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                                    <i class="bi bi-person me-2 text-muted"></i>
                                     {{ form.first_name.label }}
                                 </label>
                                 {{ form.first_name }}
                                 {% if form.first_name.errors %}
-                                    <div class="text-danger">
+                                    <div class="invalid-feedback d-block">
                                         {% for error in form.first_name.errors %}
                                             <div><small>{{ error }}</small></div>
                                         {% endfor %}
@@ -82,13 +128,14 @@
                         </div>
                         
                         <div class="col-md-6">
-                            <div class="mb-3">
+                            <div class="form-group">
                                 <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                                    <i class="bi bi-person me-2 text-muted"></i>
                                     {{ form.last_name.label }}
                                 </label>
                                 {{ form.last_name }}
                                 {% if form.last_name.errors %}
-                                    <div class="text-danger">
+                                    <div class="invalid-feedback d-block">
                                         {% for error in form.last_name.errors %}
                                             <div><small>{{ error }}</small></div>
                                         {% endfor %}
@@ -98,32 +145,34 @@
                         </div>
                     </div>
                     
-                    
+                    <!-- Form Errors -->
                     {% if form.non_field_errors %}
                         <div class="alert alert-danger">
+                            <i class="bi bi-exclamation-triangle me-2"></i>
                             {% for error in form.non_field_errors %}
                                 <div><small>{{ error }}</small></div>
                             {% endfor %}
                         </div>
                     {% endif %}
                     
-                    <div class="d-flex justify-content-between">
-                        <div>
+                    <!-- Action Buttons -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="btn-group">
                             <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-check"></i> Сохранить изменения
+                                <i class="bi bi-check-lg me-2"></i> Сохранить изменения
                             </button>
                             <a href="{% if request.GET.next == 'users:user_list' %}{% url 'users:user_list' %}{% else %}{% url 'users:user_detail' user_obj.id %}{% endif %}" class="btn btn-outline-secondary">
-                                <i class="bi bi-x"></i> Отмена
+                                <i class="bi bi-x-lg me-2"></i> Отмена
                             </a>
                         </div>
                         
                         {% if user_obj != request.user %}
                             <div>
                                 <a href="{% url 'users:user_toggle_block' user_obj.id %}" 
-                                   class="btn btn-{% if user_obj.role == 'blocked' %}success{% else %}warning{% endif %}"
-                                   onclick="return confirm('Вы уверены, что хотите {% if user_obj.role == 'blocked' %}разблокировать{% else %}заблокировать{% endif %} этого пользователя?')">
-                                    <i class="bi bi-{% if user_obj.role == 'blocked' %}unlock{% else %}lock{% endif %}"></i>
-                                    {% if user_obj.role == 'blocked' %}Разблокировать{% else %}Заблокировать{% endif %}
+                                   class="btn btn-{% if not user_obj.is_active %}success{% else %}danger{% endif %}"
+                                   onclick="return confirm('Вы уверены, что хотите {% if not user_obj.is_active %}разблокировать{% else %}заблокировать{% endif %} этого пользователя?')">
+                                    <i class="bi bi-{% if not user_obj.is_active %}unlock{% else %}lock{% endif %} me-2"></i>
+                                    {% if not user_obj.is_active %}Разблокировать{% else %}Заблокировать{% endif %}
                                 </a>
                             </div>
                         {% endif %}
@@ -132,34 +181,184 @@
             </div>
         </div>
         
-        <!-- Информация о пользователе -->
-        <div class="card mt-4">
+        <!-- User Information Card -->
+        <div class="card">
             <div class="card-header">
-                <h6 class="card-title mb-0">
-                    <i class="bi bi-info-circle"></i> Дополнительная информация
-                </h6>
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-info-circle text-primary me-2"></i>
+                    Дополнительная информация
+                </h5>
             </div>
             <div class="card-body">
-                <div class="row">
+                <div class="row g-4">
                     <div class="col-md-6">
-                        <small class="text-muted">
-                            <strong>Дата регистрации:</strong><br>
-                            {{ user_obj.date_joined|date:"d.m.Y H:i" }}
-                        </small>
+                        <div class="info-item">
+                            <label class="info-label">Дата регистрации</label>
+                            <div class="info-value">
+                                <i class="bi bi-calendar-plus me-2 text-muted"></i>
+                                <div class="d-flex flex-column">
+                                    <span>{{ user_obj.date_joined|date:"d.m.Y" }}</span>
+                                    <small class="text-muted">{{ user_obj.date_joined|date:"H:i" }}</small>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-md-6">
-                        <small class="text-muted">
-                            <strong>Последняя авторизация:</strong><br>
-                            {% if user_obj.last_login_date %}
-                                {{ user_obj.last_login_date|date:"d.m.Y H:i" }}
-                            {% else %}
-                                Никогда
-                            {% endif %}
-                        </small>
+                        <div class="info-item">
+                            <label class="info-label">Последняя авторизация</label>
+                            <div class="info-value">
+                                <i class="bi bi-clock-history me-2 text-muted"></i>
+                                {% if user_obj.last_login_date %}
+                                    <div class="d-flex flex-column">
+                                        <span>{{ user_obj.last_login_date|date:"d.m.Y" }}</span>
+                                        <small class="text-muted">{{ user_obj.last_login_date|date:"H:i" }}</small>
+                                    </div>
+                                {% else %}
+                                    <span class="text-muted">Никогда</span>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<style>
+/* User Edit Specific Styles */
+.page-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #1e40af 100%);
+    color: white;
+    padding: 3rem 0;
+    margin: -2rem -1.5rem 0 -1.5rem;
+    border-radius: 0 0 1rem 1rem;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    font-weight: 500;
+    color: var(--gray-700);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+}
+
+.form-control, .form-select {
+    border-radius: 0.5rem;
+    border: 1px solid var(--gray-300);
+    padding: 0.75rem 1rem;
+    transition: all 0.15s ease-in-out;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+}
+
+.info-item {
+    margin-bottom: 1.5rem;
+}
+
+.info-label {
+    display: block;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    color: var(--gray-900);
+}
+
+.info-value i {
+    font-size: 1.1rem;
+}
+
+/* Card improvements */
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 0.75rem;
+}
+
+.card-header {
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-200);
+    border-radius: 0.75rem 0.75rem 0 0 !important;
+    padding: 1.25rem 1.5rem;
+}
+
+.card-title {
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Button improvements */
+.btn {
+    border-radius: 0.5rem;
+    font-weight: 500;
+    padding: 0.75rem 1.25rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .page-header {
+        margin: -2rem -1rem 0 -1rem;
+        padding: 2rem 0;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .info-item {
+        margin-bottom: 1rem;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn-group .btn {
+        border-radius: 0.5rem !important;
+        margin-bottom: 0.5rem;
+    }
+    
+    .btn-group .btn:last-child {
+        margin-bottom: 0;
+    }
+}
+</style>
 {% endblock %}

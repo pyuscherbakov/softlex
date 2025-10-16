@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}Пользователи - Softlex{% endblock %}
-{% block meta_description %}Управление пользователями в Softlex. Просмотр, редактирование и управление доступом пользователей системы.{% endblock %}
+{% block meta_description %}Управляйте пользователями в Softlex. Создавайте, редактируйте и управляйте доступом пользователей системы.{% endblock %}
 
 {% block breadcrumbs %}
 <nav aria-label="breadcrumb">
@@ -12,7 +12,7 @@
             </a>
         </li>
         <li class="breadcrumb-item active" aria-current="page">
-            <i class="bi bi-people"></i> Пользователи
+            <i class="bi bi-people me-2"></i> Пользователи
         </li>
     </ol>
 </nav>
@@ -28,11 +28,8 @@
         <div class="col-md-8">
             <h1 class="page-title">
                 <i class="bi bi-people text-primary me-3"></i>
-                Пользователи системы
+                Пользователи
             </h1>
-            <p class="page-subtitle text-muted">
-                Управление пользователями и правами доступа к системе
-            </p>
         </div>
         <div class="col-md-4 text-md-end">
             <a href="{% url 'users:register' %}" class="btn btn-primary btn-lg">
@@ -48,7 +45,7 @@
     <div class="card-header">
         <h5 class="mb-0">
             <i class="bi bi-funnel text-primary me-2"></i>
-            Фильтры и поиск
+            Поиск и фильтры
         </h5>
     </div>
     <div class="card-body">
@@ -104,7 +101,7 @@
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="mb-0">
                 <i class="bi bi-list text-primary me-2"></i>
-                Список пользователей
+                Пользователи
             </h5>
             <span class="badge bg-primary">{{ page_obj|length }}</span>
         </div>
@@ -284,30 +281,30 @@
 }
 
 .page-header {
-    background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-primary-dark) 100%);
-    color: white;
-    padding: 3rem 0;
-    margin: -2rem -1.5rem 0 -1.5rem;
-    border-radius: 0 0 1rem 1rem;
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-tertiary) 100%);
+    padding: var(--space-6);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
 }
 
 .page-title {
-    font-size: 2.5rem;
+    font-size: var(--text-3xl);
     font-weight: 700;
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--space-2);
+    color: var(--text-primary);
 }
 
 .page-subtitle {
-    font-size: 1.1rem;
-    opacity: 0.9;
+    font-size: var(--text-lg);
+    margin-bottom: 0;
 }
 
 /* Table improvements */
 .table th {
     border-top: none;
     font-weight: 600;
-    color: var(--bs-gray-700);
-    background: var(--bs-gray-50);
+    color: var(--gray-700);
+    background: var(--gray-50);
 }
 
 .table td {
@@ -316,7 +313,7 @@
 }
 
 .table tbody tr:hover {
-    background-color: var(--bs-gray-50);
+    background-color: var(--gray-50);
 }
 
 /* Button group improvements */
@@ -340,15 +337,34 @@
     border-radius: 0.5rem;
 }
 
+/* Form controls height alignment */
+.form-control,
+.form-select {
+    height: 38px; /* Consistent height for all form controls */
+}
+
+.input-group .form-control {
+    height: 38px; /* Same height as form-select */
+}
+
+.input-group-text {
+    height: 38px; /* Same height as form-select */
+    display: flex;
+    align-items: center;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .page-header {
-        margin: -2rem -1rem 0 -1rem;
-        padding: 2rem 0;
+        padding: var(--space-4);
     }
     
     .page-title {
-        font-size: 2rem;
+        font-size: var(--text-2xl);
+    }
+    
+    .page-subtitle {
+        font-size: var(--text-base);
     }
     
     .table-responsive {

@@ -241,13 +241,14 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <p class="text-muted small mb-3">
+                    <div class="alert alert-{% if not user_obj.is_active %}info{% else %}warning{% endif %} mb-3">
+                        <i class="bi bi-{% if not user_obj.is_active %}info-circle{% else %}exclamation-triangle{% endif %} me-2"></i>
                         {% if user_obj.is_active %}
                             Заблокировать доступ пользователя к системе
                         {% else %}
                             Разблокировать доступ пользователя к системе
                         {% endif %}
-                    </p>
+                    </div>
                     <form method="post" action="{% url 'users:user_toggle_block' user_obj.id %}" 
                           onsubmit="return confirm('Вы уверены, что хотите {% if not user_obj.is_active %}разблокировать{% else %}заблокировать{% endif %} этого пользователя?')">
                         {% csrf_token %}
@@ -268,7 +269,7 @@
 <style>
 /* User Detail Specific Styles */
 .user-header {
-    background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-primary-dark) 100%);
+    background: linear-gradient(135deg, var(--primary-color) 0%, #1e40af 100%);
     color: white;
     padding: 3rem 0;
     margin: -2rem -1.5rem 0 -1.5rem;
@@ -310,7 +311,7 @@
 .info-label {
     display: block;
     font-weight: 600;
-    color: var(--bs-gray-700);
+    color: var(--gray-700);
     margin-bottom: 0.5rem;
     font-size: 0.875rem;
     text-transform: uppercase;
@@ -321,7 +322,7 @@
     display: flex;
     align-items: center;
     font-size: 1rem;
-    color: var(--bs-gray-900);
+    color: var(--gray-900);
 }
 
 .info-value i {
@@ -336,15 +337,15 @@
 }
 
 .card-header {
-    background: var(--bs-gray-50);
-    border-bottom: 1px solid var(--bs-gray-200);
+    background: var(--gray-50);
+    border-bottom: 1px solid var(--gray-200);
     border-radius: 0.75rem 0.75rem 0 0 !important;
     padding: 1.25rem 1.5rem;
 }
 
 .card-title {
     font-weight: 600;
-    color: var(--bs-gray-800);
+    color: var(--gray-800);
 }
 
 .card-body {

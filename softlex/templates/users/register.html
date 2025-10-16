@@ -13,8 +13,20 @@
                     <div class="auth-icon">
                         <i class="bi bi-person-plus"></i>
                     </div>
-                    <h2 class="auth-title">Создать аккаунт</h2>
-                    <p class="auth-subtitle">Присоединяйтесь к Softlex</p>
+                    <h2 class="auth-title">
+                        {% if user.is_authenticated %}
+                            Добавить пользователя
+                        {% else %}
+                            Создать аккаунт
+                        {% endif %}
+                    </h2>
+                    <p class="auth-subtitle">
+                        {% if user.is_authenticated %}
+                            Создайте нового пользователя в системе
+                        {% else %}
+                            Присоединяйтесь к Softlex
+                        {% endif %}
+                    </p>
                 </div>
                 
                 <div class="auth-body">
@@ -105,7 +117,11 @@
                         <div class="d-grid mb-3">
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-person-plus me-2"></i>
-                                Создать аккаунт
+                                {% if user.is_authenticated %}
+                                    Добавить пользователя
+                                {% else %}
+                                    Создать аккаунт
+                                {% endif %}
                             </button>
                         </div>
                     </form>
@@ -113,12 +129,21 @@
                 
                 <div class="auth-footer">
                     <div class="text-center">
-                        <p class="mb-0">
-                            Уже есть аккаунт? 
-                            <a href="{% url 'users:login' %}" class="auth-link">
-                                Войти
-                            </a>
-                        </p>
+                        {% if user.is_authenticated %}
+                            <p class="mb-0">
+                                <a href="{% url 'users:user_list' %}" class="auth-link">
+                                    <i class="bi bi-arrow-left me-1"></i>
+                                    Назад к списку пользователей
+                                </a>
+                            </p>
+                        {% else %}
+                            <p class="mb-0">
+                                Уже есть аккаунт? 
+                                <a href="{% url 'users:login' %}" class="auth-link">
+                                    Войти
+                                </a>
+                            </p>
+                        {% endif %}
                     </div>
                 </div>
             </div>
