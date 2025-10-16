@@ -36,6 +36,8 @@ class User(AbstractUser):
     ]
     
     email = models.EmailField(unique=True, verbose_name='Email')
+    first_name = models.CharField(max_length=150, blank=True, verbose_name='Имя')
+    last_name = models.CharField(max_length=150, blank=True, verbose_name='Фамилия')
     role = models.CharField(
         max_length=10, 
         choices=ROLE_CHOICES, 
@@ -71,3 +73,15 @@ class User(AbstractUser):
     @property
     def is_blocked(self):
         return not self.is_active
+    
+    @property
+    def full_name(self):
+        """Возвращает полное имя пользователя"""
+        if self.first_name and self.last_name:
+            return f"{self.first_name} {self.last_name}"
+        elif self.first_name:
+            return self.first_name
+        elif self.last_name:
+            return self.last_name
+        else:
+            return self.email
