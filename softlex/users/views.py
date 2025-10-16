@@ -44,16 +44,32 @@ def logout_view(request):
 
 def register_view(request):
     """Регистрация"""
-    if request.user.is_authenticated:
+    # Если пользователь не аутентифицирован, показываем обычную регистрацию
+    if not request.user.is_authenticated:
+        if request.method == 'POST':
+            form = RegistrationForm(request.POST)
+            if form.is_valid():
+                user = form.save()
+                login(request, user)
+                messages.success(request, 'Регистрация прошла успешно')
+                return redirect('/')
+        else:
+            form = RegistrationForm()
+        
+        return render(request, 'users/register.html', {'form': form})
+    
+    # Если пользователь аутентифицирован, проверяем права администратора
+    if not request.user.is_admin:
+        messages.error(request, 'У вас нет прав для создания пользователей')
         return redirect('/')
     
+    # Администратор может создавать пользователей
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
-            messages.success(request, 'Регистрация прошла успешно')
-            return redirect('/')
+            messages.success(request, f'Пользователь {user.email} успешно создан')
+            return redirect('users:user_list')
     else:
         form = RegistrationForm()
     
