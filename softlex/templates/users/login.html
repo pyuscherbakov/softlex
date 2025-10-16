@@ -29,7 +29,7 @@
                             {% if form.email.errors %}
                                 <div class="invalid-feedback d-block">
                                     {% for error in form.email.errors %}
-                                        {{ error }}
+                                        <div>{{ error }}</div>
                                     {% endfor %}
                                 </div>
                             {% endif %}
@@ -43,18 +43,18 @@
                             {% if form.password.errors %}
                                 <div class="invalid-feedback d-block">
                                     {% for error in form.password.errors %}
-                                        {{ error }}
+                                        <div>{{ error }}</div>
                                     {% endfor %}
                                 </div>
                             {% endif %}
                         </div>
                         
                         {% if form.non_field_errors %}
-                            <div class="alert alert-danger d-flex align-items-center" role="alert">
-                                <i class="bi bi-exclamation-triangle me-2"></i>
+                            <div class="alert alert-danger d-flex align-items-start" role="alert">
+                                <i class="bi bi-exclamation-triangle me-2 mt-1"></i>
                                 <div>
                                     {% for error in form.non_field_errors %}
-                                        {{ error }}
+                                        <div>{{ error }}</div>
                                     {% endfor %}
                                 </div>
                             </div>

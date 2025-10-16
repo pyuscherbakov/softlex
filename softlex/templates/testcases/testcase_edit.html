@@ -31,7 +31,7 @@
                             {% if form.title.errors %}
                                 <div class="text-danger">
                                     {% for error in form.title.errors %}
-                                        <small>{{ error }}</small>
+                                        <div><small>{{ error }}</small></div>
                                     {% endfor %}
                                 </div>
                             {% endif %}
@@ -42,7 +42,7 @@
                             {% if form.project.errors %}
                                 <div class="text-danger">
                                     {% for error in form.project.errors %}
-                                        <small>{{ error }}</small>
+                                        <div><small>{{ error }}</small></div>
                                     {% endfor %}
                                 </div>
                             {% endif %}
@@ -53,9 +53,9 @@
                         {{ form.description }}
                         {% if form.description.errors %}
                             <div class="text-danger">
-                                {% for error in form.description.errors %}
-                                    <small>{{ error }}</small>
-                                {% endfor %}
+                                    {% for error in form.description.errors %}
+                                        <div><small>{{ error }}</small></div>
+                                    {% endfor %}
                             </div>
                         {% endif %}
                     </div>
@@ -64,9 +64,9 @@
                         {{ form.preconditions }}
                         {% if form.preconditions.errors %}
                             <div class="text-danger">
-                                {% for error in form.preconditions.errors %}
-                                    <small>{{ error }}</small>
-                                {% endfor %}
+                                    {% for error in form.preconditions.errors %}
+                                        <div><small>{{ error }}</small></div>
+                                    {% endfor %}
                             </div>
                         {% endif %}
                     </div>
@@ -75,9 +75,9 @@
                         {{ form.steps }}
                         {% if form.steps.errors %}
                             <div class="text-danger">
-                                {% for error in form.steps.errors %}
-                                    <small>{{ error }}</small>
-                                {% endfor %}
+                                    {% for error in form.steps.errors %}
+                                        <div><small>{{ error }}</small></div>
+                                    {% endfor %}
                             </div>
                         {% endif %}
                     </div>
@@ -86,16 +86,16 @@
                         {{ form.expected_result }}
                         {% if form.expected_result.errors %}
                             <div class="text-danger">
-                                {% for error in form.expected_result.errors %}
-                                    <small>{{ error }}</small>
-                                {% endfor %}
+                                    {% for error in form.expected_result.errors %}
+                                        <div><small>{{ error }}</small></div>
+                                    {% endfor %}
                             </div>
                         {% endif %}
                     </div>
                     {% if form.non_field_errors %}
                         <div class="alert alert-danger">
                             {% for error in form.non_field_errors %}
-                                <small>{{ error }}</small>
+                                <div><small>{{ error }}</small></div>
                             {% endfor %}
                         </div>
                     {% endif %}

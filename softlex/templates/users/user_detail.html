@@ -33,7 +33,16 @@
                     <i class="bi bi-person-circle"></i>
                 </div>
                 <div>
-                    <h1 class="user-name mb-1">{{ user_obj.email }}</h1>
+                    <h1 class="user-name mb-1">
+                        {% if user_obj.first_name or user_obj.last_name %}
+                            {{ user_obj.first_name }} {{ user_obj.last_name }}
+                        {% else %}
+                            {{ user_obj.email }}
+                        {% endif %}
+                    </h1>
+                    {% if user_obj.first_name or user_obj.last_name %}
+                        <p class="user-email mb-1 text-white-50">{{ user_obj.email }}</p>
+                    {% endif %}
                     <p class="user-role mb-0">
                         <span class="badge bg-{% if user_obj.role == 'admin' %}danger{% else %}primary{% endif %} me-2">
                             <i class="bi bi-{% if user_obj.role == 'admin' %}shield-check{% else %}person{% endif %} me-1"></i>
@@ -282,6 +291,11 @@
     font-size: 2.5rem;
     font-weight: 700;
     margin-bottom: 0.5rem;
+}
+
+.user-email {
+    font-size: 1rem;
+    opacity: 0.8;
 }
 
 .user-role {

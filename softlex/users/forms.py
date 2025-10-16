@@ -12,14 +12,21 @@ class LoginForm(forms.Form):
             'class': 'form-control',
             'placeholder': 'Введите email'
         }),
-        label='Email'
+        label='Email',
+        error_messages={
+            'required': 'Поле email обязательно для заполнения',
+            'invalid': 'Введите корректный email адрес'
+        }
     )
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={
             'class': 'form-control',
             'placeholder': 'Введите пароль'
         }),
-        label='Пароль'
+        label='Пароль',
+        error_messages={
+            'required': 'Поле пароль обязательно для заполнения'
+        }
     )
     
     def clean(self):
@@ -46,12 +53,42 @@ class RegistrationForm(UserCreationForm):
             'class': 'form-control',
             'placeholder': 'Введите email'
         }),
-        label='Email'
+        label='Email',
+        error_messages={
+            'required': 'Поле email обязательно для заполнения',
+            'invalid': 'Введите корректный email адрес'
+        }
+    )
+    
+    first_name = forms.CharField(
+        max_length=30,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Введите имя'
+        }),
+        label='Имя',
+        required=False,
+        error_messages={
+            'max_length': 'Имя не должно превышать 30 символов'
+        }
+    )
+    
+    last_name = forms.CharField(
+        max_length=30,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Введите фамилию'
+        }),
+        label='Фамилия',
+        required=False,
+        error_messages={
+            'max_length': 'Фамилия не должна превышать 30 символов'
+        }
     )
     
     class Meta:
         model = User
-        fields = ('email', 'password1', 'password2')
+        fields = ('email', 'first_name', 'last_name', 'password1', 'password2')
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -63,12 +100,31 @@ class RegistrationForm(UserCreationForm):
             'class': 'form-control',
             'placeholder': 'Подтвердите пароль'
         })
+        
+        # Русские сообщения для полей пароля
+        self.fields['password1'].error_messages.update({
+            'required': 'Поле пароль обязательно для заполнения',
+            'min_length': 'Пароль должен содержать минимум 8 символов',
+            'password_too_common': 'Пароль слишком простой',
+            'password_entirely_numeric': 'Пароль не может состоять только из цифр'
+        })
+        
+        self.fields['password2'].error_messages.update({
+            'required': 'Поле подтверждения пароля обязательно для заполнения'
+        })
     
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError('Пользователь с таким email уже существует')
         return email
+    
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise forms.ValidationError("Пароли не совпадают")
+        return password2
 
 
 class UserEditForm(forms.ModelForm):
@@ -85,7 +141,11 @@ class UserEditForm(forms.ModelForm):
         widget=forms.Select(attrs={
             'class': 'form-control'
         }),
-        label='Роль'
+        label='Роль',
+        error_messages={
+            'required': 'Поле роль обязательно для заполнения',
+            'invalid_choice': 'Выберите корректную роль'
+        }
     )
     
     class Meta:
@@ -109,6 +169,18 @@ class UserEditForm(forms.ModelForm):
             'email': 'Email',
             'first_name': 'Имя',
             'last_name': 'Фамилия',
+        }
+        error_messages = {
+            'email': {
+                'required': 'Поле email обязательно для заполнения',
+                'invalid': 'Введите корректный email адрес'
+            },
+            'first_name': {
+                'max_length': 'Имя не должно превышать 30 символов'
+            },
+            'last_name': {
+                'max_length': 'Фамилия не должна превышать 30 символов'
+            }
         }
     
     def clean_email(self):

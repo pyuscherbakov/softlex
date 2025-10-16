@@ -31,6 +31,15 @@ class ProjectForm(forms.ModelForm):
                 'placeholder': 'Введите описание проекта'
             }),
         }
+        error_messages = {
+            'name': {
+                'required': 'Поле название проекта обязательно для заполнения',
+                'max_length': 'Название проекта не должно превышать 200 символов'
+            },
+            'description': {
+                'max_length': 'Описание проекта не должно превышать 1000 символов'
+            }
+        }
     
     def __init__(self, *args, **kwargs):
         self.user = kwargs.pop('user', None)
@@ -181,6 +190,29 @@ class TestCaseForm(forms.ModelForm):
             'project': forms.Select(attrs={
                 'class': 'form-select'
             }),
+        }
+        error_messages = {
+            'title': {
+                'required': 'Поле название тест-кейса обязательно для заполнения',
+                'max_length': 'Название тест-кейса не должно превышать 200 символов'
+            },
+            'description': {
+                'max_length': 'Описание тест-кейса не должно превышать 1000 символов'
+            },
+            'preconditions': {
+                'max_length': 'Предусловия не должны превышать 1000 символов'
+            },
+            'steps': {
+                'required': 'Поле шаги выполнения обязательно для заполнения',
+                'max_length': 'Шаги выполнения не должны превышать 2000 символов'
+            },
+            'expected_result': {
+                'required': 'Поле ожидаемый результат обязательно для заполнения',
+                'max_length': 'Ожидаемый результат не должен превышать 1000 символов'
+            },
+            'project': {
+                'required': 'Поле проект обязательно для заполнения'
+            }
         }
     
     def __init__(self, *args, **kwargs):
