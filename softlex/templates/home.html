@@ -46,20 +46,19 @@
                                     Привет, {{ user.full_name }}!
                                 </h2>
                                 <p class="lead text-muted mb-4">
-                                    Добро пожаловать в вашу рабочую область. Здесь вы можете управлять проектами, 
-                                    создавать тест-кейсы и работать с командой.
+                                    Добро пожаловать в вашу рабочую область.
                                 </p>
                                 <div class="d-flex flex-wrap gap-3">
-                                    <a href="{% url 'testcases:project_list' %}" class="btn btn-primary">
+                                    <a href="{% url 'testcases:project_list' %}" class="btn btn-primary flex-fill">
                                         <i class="bi bi-folder me-2"></i>
                                         Проекты
                                     </a>
-                                    <a href="{% url 'testcases:testcase_list' %}" class="btn btn-outline-primary">
+                                    <a href="{% url 'testcases:testcase_list' %}" class="btn btn-outline-primary flex-fill">
                                         <i class="bi bi-list-check me-2"></i>
                                         Тест-кейсы
                                     </a>
                                     {% if user.is_admin %}
-                                        <a href="{% url 'users:user_list' %}" class="btn btn-outline-secondary">
+                                        <a href="{% url 'users:user_list' %}" class="btn btn-outline-secondary flex-fill">
                                             <i class="bi bi-people me-2"></i>
                                             Пользователи
                                         </a>
