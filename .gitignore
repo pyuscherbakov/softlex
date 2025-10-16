@@ -207,3 +207,7 @@ marimo/_lsp/
 __marimo__/
 
 AGENTS.md
+
+# Playwright
+.playwright-mcp/
+.playwright/
