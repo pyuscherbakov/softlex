@@ -1,23 +1,67 @@
 {% extends 'base.html' %}
 
 {% block title %}Пользователи - Softlex{% endblock %}
+{% block meta_description %}Управление пользователями в Softlex. Просмотр, редактирование и управление доступом пользователей системы.{% endblock %}
+
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'testcases:home' %}">
+                <i class="bi bi-house"></i> Главная
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="bi bi-people"></i> Пользователи
+        </li>
+    </ol>
+</nav>
+{% endblock %}
 
 {% block content %}
 <!-- Скрытый CSRF токен для JavaScript -->
 {% csrf_token %}
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="bi bi-people"></i> Пользователи системы</h2>
+<!-- Header Section -->
+<div class="page-header mb-5">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="page-title">
+                <i class="bi bi-people text-primary me-3"></i>
+                Пользователи системы
+            </h1>
+            <p class="page-subtitle text-muted">
+                Управление пользователями и правами доступа к системе
+            </p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'users:register' %}" class="btn btn-primary btn-lg">
+                <i class="bi bi-plus-lg me-2"></i>
+                Добавить пользователя
+            </a>
+        </div>
+    </div>
 </div>
 
-<!-- Фильтры и поиск -->
+<!-- Filters -->
 <div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="bi bi-funnel text-primary me-2"></i>
+            Фильтры и поиск
+        </h5>
+    </div>
     <div class="card-body">
         <form method="get" class="row g-3">
             <div class="col-md-4">
                 <label for="search" class="form-label">Поиск</label>
-                <input type="text" class="form-control" id="search" name="search" 
-                       value="{{ search }}" placeholder="Поиск по email, имени или фамилии">
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" class="form-control" id="search" name="search" 
+                           value="{{ search }}" placeholder="Email, имя или фамилия">
+                </div>
             </div>
             <div class="col-md-3">
                 <label for="role" class="form-label">Роль</label>
@@ -30,32 +74,50 @@
                     {% endfor %}
                 </select>
             </div>
-            <div class="col-md-3 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary me-2">
-                    <i class="bi bi-search"></i> Найти
-                </button>
-                <a href="{% url 'users:user_list' %}" class="btn btn-outline-secondary">
-                    <i class="bi bi-arrow-clockwise"></i> Сбросить
-                </a>
+            <div class="col-md-3">
+                <label for="status" class="form-label">Статус</label>
+                <select class="form-select" id="status" name="status">
+                    <option value="">Все статусы</option>
+                    <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Активные</option>
+                    <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Заблокированные</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <div class="d-grid gap-2 w-100">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-search me-1"></i>
+                        Найти
+                    </button>
+                    <a href="{% url 'users:user_list' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-clockwise me-1"></i>
+                        Сбросить
+                    </a>
+                </div>
             </div>
         </form>
     </div>
 </div>
 
 {% if page_obj %}
-    <!-- Таблица пользователей -->
+    <!-- Users Table -->
     <div class="card">
-        <div class="card-body">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-list text-primary me-2"></i>
+                Список пользователей
+            </h5>
+            <span class="badge bg-primary">{{ page_obj|length }}</span>
+        </div>
+        <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table table-hover mb-0">
                     <thead>
                         <tr>
-                            <th>Email</th>
-                            <th>Имя</th>
+                            <th>Пользователь</th>
                             <th>Роль</th>
-                            <th>Дата регистрации</th>
-                            <th>Последняя авторизация</th>
                             <th>Статус</th>
+                            <th>Регистрация</th>
+                            <th>Последний вход</th>
                             <th>Действия</th>
                         </tr>
                     </thead>
@@ -63,43 +125,66 @@
                         {% for user in page_obj %}
                             <tr>
                                 <td>
-                                    <a href="{% url 'users:user_detail' user.id %}" class="text-decoration-none">
-                                        {{ user.email }}
-                                    </a>
+                                    <div class="d-flex align-items-center">
+                                        <div class="user-avatar me-3">
+                                            <i class="bi bi-person-circle text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">
+                                                <a href="{% url 'users:user_detail' user.id %}" class="text-decoration-none">
+                                                    {{ user.email }}
+                                                </a>
+                                            </div>
+                                            <small class="text-muted">
+                                                {% if user.first_name or user.last_name %}
+                                                    {{ user.first_name }} {{ user.last_name }}
+                                                {% else %}
+                                                    Имя не указано
+                                                {% endif %}
+                                            </small>
+                                        </div>
+                                    </div>
                                 </td>
                                 <td>
-                                    {% if user.first_name or user.last_name %}
-                                        {{ user.first_name }} {{ user.last_name }}
-                                    {% else %}
-                                        <span class="text-muted">Не указано</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {{ user.get_role_display }}
-                                </td>
-                                <td>
-                                    <small class="text-muted">
-                                        {{ user.date_joined|date:"d.m.Y H:i" }}
-                                    </small>
-                                </td>
-                                <td>
-                                    {% if user.last_login_date %}
-                                        <small class="text-muted">
-                                            {{ user.last_login_date|date:"d.m.Y H:i" }}
-                                        </small>
-                                    {% else %}
-                                        <span class="text-muted">Никогда</span>
-                                    {% endif %}
+                                    <span class="badge bg-{% if user.role == 'admin' %}danger{% else %}primary{% endif %}">
+                                        <i class="bi bi-{% if user.role == 'admin' %}shield-check{% else %}person{% endif %} me-1"></i>
+                                        {{ user.get_role_display }}
+                                    </span>
                                 </td>
                                 <td>
                                     {% if user.is_active %}
-                                        <span class="badge bg-success">Активен</span>
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle me-1"></i>
+                                            Активен
+                                        </span>
                                     {% else %}
-                                        <span class="badge bg-danger">Заблокирован</span>
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-x-circle me-1"></i>
+                                            Заблокирован
+                                        </span>
                                     {% endif %}
                                 </td>
                                 <td>
-                                    <div class="btn-group btn-group-sm" role="group">
+                                    <div class="d-flex flex-column">
+                                        <span>{{ user.date_joined|date:"d.m.Y" }}</span>
+                                        <small class="text-muted">{{ user.date_joined|date:"H:i" }}</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if user.last_login_date %}
+                                        <div class="d-flex flex-column">
+                                            <span>{{ user.last_login_date|date:"d.m.Y" }}</span>
+                                            <small class="text-muted">{{ user.last_login_date|date:"H:i" }}</small>
+                                        </div>
+                                    {% else %}
+                                        <span class="text-muted">
+                                            <i class="bi bi-dash-circle me-1"></i>
+                                            Никогда
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
                                         <a href="{% url 'users:user_detail' user.id %}" 
                                            class="btn btn-outline-primary" title="Просмотр">
                                             <i class="bi bi-eye"></i>
@@ -115,6 +200,10 @@
                                                     onclick="toggleUserBlock({{ user.id }}, '{{ user.is_active|yesno:"true,false" }}', '{{ user.email }}')">
                                                 <i class="bi bi-{% if not user.is_active %}unlock{% else %}lock{% endif %}"></i>
                                             </button>
+                                        {% else %}
+                                            <span class="btn btn-outline-secondary disabled" title="Нельзя заблокировать себя">
+                                                <i class="bi bi-shield-check"></i>
+                                            </span>
                                         {% endif %}
                                     </div>
                                 </td>
@@ -166,27 +255,111 @@
     {% endif %}
 
 {% else %}
-    <div class="text-center py-5">
-        <i class="bi bi-people display-1 text-muted"></i>
-        <h4 class="text-muted mt-3">Пользователи не найдены</h4>
-        <p class="text-muted">Попробуйте изменить параметры поиска</p>
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="bi bi-people"></i>
+        </div>
+        <h4 class="empty-state-title">Пользователи не найдены</h4>
+        <p class="empty-state-text">Попробуйте изменить параметры поиска или добавить нового пользователя</p>
+        <a href="{% url 'users:register' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-2"></i>
+            Добавить пользователя
+        </a>
     </div>
 {% endif %}
 {% endblock %}
 
 {% block extra_js %}
 <style>
-/* Центрирование иконок в кнопках */
+/* User List Specific Styles */
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bs-light);
+    border-radius: 50%;
+    font-size: 1.5rem;
+}
+
+.page-header {
+    background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-primary-dark) 100%);
+    color: white;
+    padding: 3rem 0;
+    margin: -2rem -1.5rem 0 -1.5rem;
+    border-radius: 0 0 1rem 1rem;
+}
+
+.page-title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+/* Table improvements */
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: var(--bs-gray-700);
+    background: var(--bs-gray-50);
+}
+
+.table td {
+    vertical-align: middle;
+    padding: 1rem 0.75rem;
+}
+
+.table tbody tr:hover {
+    background-color: var(--bs-gray-50);
+}
+
+/* Button group improvements */
 .btn-group .btn {
     display: flex !important;
     justify-content: center !important;
     align-items: center !important;
     text-align: center !important;
+    min-width: 38px;
 }
 
 .btn-group .btn i {
     margin: 0 !important;
     padding: 0 !important;
+}
+
+/* Badge improvements */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .page-header {
+        margin: -2rem -1rem 0 -1rem;
+        padding: 2rem 0;
+    }
+    
+    .page-title {
+        font-size: 2rem;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 1.25rem;
+    }
 }
 </style>
 

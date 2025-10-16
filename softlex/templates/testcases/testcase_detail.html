@@ -1,129 +1,468 @@
 {% extends 'base.html' %}
 
 {% block title %}{{ test_case.title }} - Softlex{% endblock %}
+{% block meta_description %}Тест-кейс "{{ test_case.title }}" в проекте {{ test_case.project.name }}. Просмотр детальной информации о тест-кейсе.{% endblock %}
+
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'testcases:home' %}">
+                <i class="bi bi-house"></i> Главная
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'testcases:project_list' %}">
+                <i class="bi bi-folder"></i> Проекты
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'testcases:project_detail' test_case.project.pk %}">
+                {{ test_case.project.name }}
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'testcases:testcase_list' %}">
+                <i class="bi bi-list-check"></i> Тест-кейсы
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            {{ test_case.title }}
+        </li>
+    </ol>
+</nav>
+{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h2><i class="bi bi-list-check"></i> {{ test_case.title }}</h2>
-        <p class="text-muted">
-            <span class="badge bg-primary">{{ test_case.project.name }}</span>
-            <small class="ms-2">
-                <i class="bi bi-calendar"></i> {{ test_case.created_at|date:"d.m.Y H:i" }}
-            </small>
-        </p>
-    </div>
-    <div>
-        <a href="{% url 'testcases:testcase_edit' test_case.pk %}" class="btn btn-outline-secondary">
-            <i class="bi bi-pencil"></i> Редактировать
-        </a>
-        <a href="{% url 'testcases:testcase_delete' test_case.pk %}" class="btn btn-outline-danger">
-            <i class="bi bi-trash"></i> Удалить
-        </a>
-        <a href="{% url 'testcases:testcase_list' %}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Назад к тест-кейсам
-        </a>
+<!-- Test Case Header -->
+<div class="testcase-header mb-5">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <div class="testcase-info">
+                <h1 class="testcase-title">
+                    <i class="bi bi-list-check text-success me-3"></i>
+                    {{ test_case.title }}
+                </h1>
+                <div class="testcase-meta">
+                    <span class="badge bg-primary me-2">
+                        <i class="bi bi-folder me-1"></i>
+                        {{ test_case.project.name }}
+                    </span>
+                    <span class="badge bg-secondary me-2">
+                        <i class="bi bi-person me-1"></i>
+                        {{ test_case.created_by.email }}
+                    </span>
+                    <span class="badge bg-info">
+                        <i class="bi bi-calendar me-1"></i>
+                        {{ test_case.created_at|date:"d.m.Y H:i" }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <div class="testcase-actions">
+                <a href="{% url 'testcases:testcase_edit' test_case.pk %}" class="btn btn-outline-secondary me-2">
+                    <i class="bi bi-pencil me-2"></i>
+                    Редактировать
+                </a>
+                <a href="{% url 'testcases:testcase_delete' test_case.pk %}" class="btn btn-outline-danger me-2">
+                    <i class="bi bi-trash me-2"></i>
+                    Удалить
+                </a>
+                <a href="{% url 'testcases:testcase_list' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i>
+                    Назад
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 
+<!-- Test Case Content -->
 <div class="row">
-    <div class="col-12">
-        <div class="card">
+    <!-- Main Content -->
+    <div class="col-lg-8">
+        <!-- Description Section -->
+        <div class="card mb-4">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Информация о тест-кейсе</h5>
+                <h5 class="mb-0">
+                    <i class="bi bi-file-text text-primary me-2"></i>
+                    Описание
+                </h5>
             </div>
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <h6><i class="bi bi-tag"></i> Название</h6>
-                        <p>{{ test_case.title }}</p>
-                        
-                        <h6><i class="bi bi-folder"></i> Проект</h6>
-                        <p>
-                            <a href="{% url 'testcases:project_detail' test_case.project.pk %}" class="text-decoration-none">
-                                {{ test_case.project.name }}
-                            </a>
-                        </p>
-                        
-                        <h6><i class="bi bi-person"></i> Создатель</h6>
-                        <p>{{ test_case.created_by.email }}</p>
+                {% if test_case.description %}
+                    <div class="testcase-content">
+                        {{ test_case.description|linebreaks }}
                     </div>
-                    <div class="col-md-6">
-                        <h6><i class="bi bi-calendar"></i> Дата создания</h6>
-                        <p>{{ test_case.created_at|date:"d.m.Y H:i" }}</p>
-                        
-                        <h6><i class="bi bi-clock"></i> Последнее обновление</h6>
-                        <p>{{ test_case.updated_at|date:"d.m.Y H:i" }}</p>
+                {% else %}
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Описание не указано
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Preconditions Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-ol text-warning me-2"></i>
+                    Предусловия
+                </h5>
+            </div>
+            <div class="card-body">
+                {% if test_case.preconditions %}
+                    <div class="testcase-content">
+                        {{ test_case.preconditions|linebreaks }}
                     </div>
+                {% else %}
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-info-circle me-2"></i>
+                        Предусловия не указаны
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Steps Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-list-nested text-info me-2"></i>
+                    Шаги выполнения
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="testcase-content">
+                    {{ test_case.steps|linebreaks }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Expected Result Section -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="bi bi-check-circle text-success me-2"></i>
+                    Ожидаемый результат
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="testcase-content">
+                    {{ test_case.expected_result|linebreaks }}
                 </div>
             </div>
         </div>
     </div>
-</div>
 
-<div class="row mt-4">
-    <div class="col-12">
-        <div class="card">
+    <!-- Sidebar -->
+    <div class="col-lg-4">
+        <!-- Test Case Info -->
+        <div class="card mb-4">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-file-text"></i> Описание</h5>
+                <h5 class="mb-0">
+                    <i class="bi bi-info-circle text-primary me-2"></i>
+                    Информация
+                </h5>
             </div>
             <div class="card-body">
-                {% if test_case.description %}
-                    <p>{{ test_case.description|linebreaks }}</p>
-                {% else %}
-                    <p class="text-muted">Описание не указано</p>
-                {% endif %}
+                <div class="info-item mb-3">
+                    <h6 class="info-label">
+                        <i class="bi bi-folder text-primary me-2"></i>
+                        Проект
+                    </h6>
+                    <p class="info-value">
+                        <a href="{% url 'testcases:project_detail' test_case.project.pk %}" class="text-decoration-none">
+                            {{ test_case.project.name }}
+                        </a>
+                    </p>
+                </div>
+                
+                <div class="info-item mb-3">
+                    <h6 class="info-label">
+                        <i class="bi bi-person text-secondary me-2"></i>
+                        Создатель
+                    </h6>
+                    <p class="info-value">{{ test_case.created_by.email }}</p>
+                </div>
+                
+                <div class="info-item mb-3">
+                    <h6 class="info-label">
+                        <i class="bi bi-calendar text-info me-2"></i>
+                        Дата создания
+                    </h6>
+                    <p class="info-value">{{ test_case.created_at|date:"d.m.Y H:i" }}</p>
+                </div>
+                
+                <div class="info-item">
+                    <h6 class="info-label">
+                        <i class="bi bi-clock text-warning me-2"></i>
+                        Обновлен
+                    </h6>
+                    <p class="info-value">{{ test_case.updated_at|date:"d.m.Y H:i" }}</p>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="row mt-4">
-    <div class="col-12">
-        <div class="card">
+        <!-- Quick Actions -->
+        <div class="card mb-4">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-list-ol"></i> Предусловия</h5>
+                <h5 class="mb-0">
+                    <i class="bi bi-lightning text-warning me-2"></i>
+                    Быстрые действия
+                </h5>
             </div>
             <div class="card-body">
-                {% if test_case.preconditions %}
-                    <p>{{ test_case.preconditions|linebreaks }}</p>
-                {% else %}
-                    <p class="text-muted">Предусловия не указаны</p>
-                {% endif %}
+                <div class="d-grid gap-2">
+                    <a href="{% url 'testcases:testcase_edit' test_case.pk %}" class="btn btn-outline-primary">
+                        <i class="bi bi-pencil me-2"></i>
+                        Редактировать
+                    </a>
+                    <a href="{% url 'testcases:project_detail' test_case.project.pk %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-folder me-2"></i>
+                        Перейти к проекту
+                    </a>
+                    <a href="{% url 'testcases:testcase_list' %}" class="btn btn-outline-info">
+                        <i class="bi bi-list me-2"></i>
+                        Все тест-кейсы
+                    </a>
+                </div>
             </div>
         </div>
-    </div>
-</div>
 
-<div class="row mt-4">
-    <div class="col-12">
+        <!-- Related Test Cases -->
         <div class="card">
             <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-list-nested"></i> Шаги выполнения</h5>
+                <h5 class="mb-0">
+                    <i class="bi bi-link text-info me-2"></i>
+                    Связанные тест-кейсы
+                </h5>
             </div>
             <div class="card-body">
-                <p>{{ test_case.steps|linebreaks }}</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row mt-4">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-check-circle"></i> Ожидаемый результат</h5>
-            </div>
-            <div class="card-body">
-                <p>{{ test_case.expected_result|linebreaks }}</p>
+                <p class="text-muted small mb-0">
+                    <i class="bi bi-info-circle me-1"></i>
+                    В этом проекте {{ test_case.project.testcase_set.count }} тест-кейсов
+                </p>
+                <div class="mt-3">
+                    <a href="{% url 'testcases:project_detail' test_case.project.pk %}" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-arrow-right me-1"></i>
+                        Просмотреть все
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
 
+<style>
+/* Test Case Header */
+.testcase-header {
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-tertiary) 100%);
+    padding: var(--space-6);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--border-color);
+}
+
+.testcase-title {
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    margin-bottom: var(--space-4);
+    color: var(--text-primary);
+}
+
+.testcase-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+}
+
+.testcase-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    justify-content: flex-end;
+}
+
+/* Test Case Content */
+.testcase-content {
+    line-height: var(--leading-relaxed);
+    color: var(--text-primary);
+}
+
+.testcase-content p {
+    margin-bottom: var(--space-4);
+}
+
+.testcase-content ul,
+.testcase-content ol {
+    margin-bottom: var(--space-4);
+    padding-left: var(--space-6);
+}
+
+.testcase-content li {
+    margin-bottom: var(--space-2);
+}
+
+/* Info Items */
+.info-item {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: var(--space-3);
+}
+
+.info-item:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.info-label {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    font-size: var(--text-base);
+    color: var(--text-primary);
+    margin-bottom: 0;
+}
+
+.info-value a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.info-value a:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
+}
+
+/* Card Headers */
+.card-header h5 {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.card-header i {
+    font-size: 1.1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .testcase-header {
+        padding: var(--space-4);
+    }
+    
+    .testcase-title {
+        font-size: var(--text-2xl);
+    }
+    
+    .testcase-actions {
+        justify-content: flex-start;
+        margin-top: var(--space-4);
+    }
+    
+    .testcase-actions .btn {
+        flex: 1;
+        min-width: 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .testcase-meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .testcase-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .testcase-actions .btn {
+        width: 100%;
+        margin-bottom: var(--space-2);
+    }
+    
+    .testcase-actions .btn:last-child {
+        margin-bottom: 0;
+    }
+    
+    .info-item {
+        padding-bottom: var(--space-2);
+    }
+}
+
+/* Print Styles */
+@media print {
+    .testcase-actions,
+    .card-header,
+    .btn {
+        display: none !important;
+    }
+    
+    .testcase-header {
+        background: none !important;
+        border: 1px solid #000 !important;
+        box-shadow: none !important;
+    }
+    
+    .card {
+        border: 1px solid #000 !important;
+        box-shadow: none !important;
+        break-inside: avoid;
+    }
+}
+</style>
+
 {% block extra_js %}
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Add print functionality
+    const printBtn = document.createElement('button');
+    printBtn.className = 'btn btn-outline-secondary btn-sm';
+    printBtn.innerHTML = '<i class="bi bi-printer me-1"></i> Печать';
+    printBtn.onclick = function() {
+        window.print();
+    };
+    
+    const quickActions = document.querySelector('.testcase-actions');
+    if (quickActions) {
+        quickActions.appendChild(printBtn);
+    }
+    
+    // Add copy to clipboard functionality for test case content
+    const contentSections = document.querySelectorAll('.testcase-content');
+    contentSections.forEach(section => {
+        section.style.cursor = 'pointer';
+        section.title = 'Нажмите для копирования';
+        
+        section.addEventListener('click', function() {
+            const text = this.textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                // Show temporary success message
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="bi bi-check-circle text-success me-2"></i>Скопировано в буфер обмена';
+                this.classList.add('text-success');
+                
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.classList.remove('text-success');
+                }, 2000);
+            }).catch(err => {
+                console.error('Ошибка копирования: ', err);
+            });
+        });
+    });
+});
+
 function editTestCase(testCaseId) {
     // TODO: Реализовать редактирование тест-кейса
     console.log('Edit test case:', testCaseId);

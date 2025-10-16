@@ -1,147 +1,251 @@
 {% extends 'base.html' %}
 
 {% block title %}{{ user_obj.email }} - Softlex{% endblock %}
+{% block meta_description %}Профиль пользователя {{ user_obj.email }} в Softlex. Просмотр информации, роли и активности пользователя.{% endblock %}
+
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'testcases:home' %}">
+                <i class="bi bi-house"></i> Главная
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{% url 'users:user_list' %}">
+                <i class="bi bi-people"></i> Пользователи
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="bi bi-person"></i> {{ user_obj.email }}
+        </li>
+    </ol>
+</nav>
+{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2><i class="bi bi-person"></i> Информация о пользователе</h2>
-    <div class="btn-group">
-        <a href="{% url 'users:user_edit' user_obj.id %}?next=users:user_detail" class="btn btn-primary">
-            <i class="bi bi-pencil"></i> Редактировать
-        </a>
-        <a href="{% url 'users:user_list' %}" class="btn btn-outline-secondary">
-            <i class="bi bi-arrow-left"></i> Назад к списку
-        </a>
+<!-- User Header -->
+<div class="user-header mb-5">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <div class="d-flex align-items-center">
+                <div class="user-avatar-large me-4">
+                    <i class="bi bi-person-circle"></i>
+                </div>
+                <div>
+                    <h1 class="user-name mb-1">{{ user_obj.email }}</h1>
+                    <p class="user-role mb-0">
+                        <span class="badge bg-{% if user_obj.role == 'admin' %}danger{% else %}primary{% endif %} me-2">
+                            <i class="bi bi-{% if user_obj.role == 'admin' %}shield-check{% else %}person{% endif %} me-1"></i>
+                            {{ user_obj.get_role_display }}
+                        </span>
+                        {% if user_obj.is_active %}
+                            <span class="badge bg-success">
+                                <i class="bi bi-check-circle me-1"></i>
+                                Активен
+                            </span>
+                        {% else %}
+                            <span class="badge bg-danger">
+                                <i class="bi bi-x-circle me-1"></i>
+                                Заблокирован
+                            </span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <div class="btn-group">
+                <a href="{% url 'users:user_edit' user_obj.id %}?next=users:user_detail" class="btn btn-primary">
+                    <i class="bi bi-pencil me-2"></i> Редактировать
+                </a>
+                <a href="{% url 'users:user_list' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-2"></i> Назад к списку
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 
 <div class="row">
-    <div class="col-md-8">
-        <div class="card">
+    <div class="col-lg-8">
+        <!-- Personal Information -->
+        <div class="card mb-4">
             <div class="card-header">
                 <h5 class="card-title mb-0">
-                    <i class="bi bi-person-circle"></i> Основная информация
+                    <i class="bi bi-person-circle text-primary me-2"></i>
+                    Личная информация
                 </h5>
             </div>
             <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-sm-3">
-                        <strong>Email:</strong>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="info-label">Email</label>
+                            <div class="info-value">
+                                <i class="bi bi-envelope me-2 text-muted"></i>
+                                {{ user_obj.email }}
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-sm-9">
-                        {{ user_obj.email }}
-                    </div>
-                </div>
-                
-                <div class="row mb-3">
-                    <div class="col-sm-3">
-                        <strong>Имя:</strong>
-                    </div>
-                    <div class="col-sm-9">
-                        {% if user_obj.first_name %}
-                            {{ user_obj.first_name }}
-                        {% else %}
-                            <span class="text-muted">Не указано</span>
-                        {% endif %}
-                    </div>
-                </div>
-                
-                <div class="row mb-3">
-                    <div class="col-sm-3">
-                        <strong>Фамилия:</strong>
-                    </div>
-                    <div class="col-sm-9">
-                        {% if user_obj.last_name %}
-                            {{ user_obj.last_name }}
-                        {% else %}
-                            <span class="text-muted">Не указано</span>
-                        {% endif %}
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="info-label">Полное имя</label>
+                            <div class="info-value">
+                                <i class="bi bi-person me-2 text-muted"></i>
+                                {% if user_obj.first_name or user_obj.last_name %}
+                                    {{ user_obj.first_name }} {{ user_obj.last_name }}
+                                {% else %}
+                                    <span class="text-muted">Не указано</span>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                 </div>
-                
-                <div class="row mb-3">
-                    <div class="col-sm-3">
-                        <strong>Роль:</strong>
+            </div>
+        </div>
+
+        <!-- Account Information -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-shield-check text-primary me-2"></i>
+                    Информация об аккаунте
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="info-label">Роль в системе</label>
+                            <div class="info-value">
+                                <span class="badge bg-{% if user_obj.role == 'admin' %}danger{% else %}primary{% endif %}">
+                                    <i class="bi bi-{% if user_obj.role == 'admin' %}shield-check{% else %}person{% endif %} me-1"></i>
+                                    {{ user_obj.get_role_display }}
+                                </span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-sm-9">
-                        <span class="badge 
-                            {% if user_obj.role == 'admin' %}bg-danger
-                            {% elif user_obj.role == 'user' %}bg-success
-                            {% elif user_obj.role == 'blocked' %}bg-secondary
-                            {% endif %} fs-6">
-                            {{ user_obj.get_role_display }}
-                        </span>
-                    </div>
-                </div>
-                
-                <div class="row mb-3">
-                    <div class="col-sm-3">
-                        <strong>Статус:</strong>
-                    </div>
-                    <div class="col-sm-9">
-                        {% if user_obj.is_active %}
-                            <span class="badge bg-success fs-6">Активен</span>
-                        {% else %}
-                            <span class="badge bg-danger fs-6">Заблокирован</span>
-                        {% endif %}
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="info-label">Статус аккаунта</label>
+                            <div class="info-value">
+                                {% if user_obj.is_active %}
+                                    <span class="badge bg-success">
+                                        <i class="bi bi-check-circle me-1"></i>
+                                        Активен
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger">
+                                        <i class="bi bi-x-circle me-1"></i>
+                                        Заблокирован
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     
-    <div class="col-md-4">
-        <div class="card">
+    <div class="col-lg-4">
+        <!-- Activity Information -->
+        <div class="card mb-4">
             <div class="card-header">
                 <h5 class="card-title mb-0">
-                    <i class="bi bi-calendar"></i> Даты
+                    <i class="bi bi-calendar-event text-primary me-2"></i>
+                    Активность
                 </h5>
             </div>
             <div class="card-body">
-                <div class="mb-3">
-                    <strong>Дата регистрации:</strong><br>
-                    <small class="text-muted">
-                        {{ user_obj.date_joined|date:"d.m.Y H:i" }}
-                    </small>
+                <div class="info-item mb-4">
+                    <label class="info-label">Дата регистрации</label>
+                    <div class="info-value">
+                        <i class="bi bi-calendar-plus me-2 text-muted"></i>
+                        <div class="d-flex flex-column">
+                            <span>{{ user_obj.date_joined|date:"d.m.Y" }}</span>
+                            <small class="text-muted">{{ user_obj.date_joined|date:"H:i" }}</small>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="mb-3">
-                    <strong>Последняя авторизация:</strong><br>
-                    {% if user_obj.last_login_date %}
-                        <small class="text-muted">
-                            {{ user_obj.last_login_date|date:"d.m.Y H:i" }}
-                        </small>
-                    {% else %}
-                        <span class="text-muted">Никогда</span>
-                    {% endif %}
+                <div class="info-item mb-4">
+                    <label class="info-label">Последняя авторизация</label>
+                    <div class="info-value">
+                        <i class="bi bi-clock-history me-2 text-muted"></i>
+                        {% if user_obj.last_login_date %}
+                            <div class="d-flex flex-column">
+                                <span>{{ user_obj.last_login_date|date:"d.m.Y" }}</span>
+                                <small class="text-muted">{{ user_obj.last_login_date|date:"H:i" }}</small>
+                            </div>
+                        {% else %}
+                            <span class="text-muted">Никогда</span>
+                        {% endif %}
+                    </div>
                 </div>
                 
                 {% if user_obj.last_login %}
-                    <div class="mb-3">
-                        <strong>Последний вход (система):</strong><br>
-                        <small class="text-muted">
-                            {{ user_obj.last_login|date:"d.m.Y H:i" }}
-                        </small>
+                    <div class="info-item">
+                        <label class="info-label">Последний вход (система)</label>
+                        <div class="info-value">
+                            <i class="bi bi-box-arrow-in-right me-2 text-muted"></i>
+                            <div class="d-flex flex-column">
+                                <span>{{ user_obj.last_login|date:"d.m.Y" }}</span>
+                                <small class="text-muted">{{ user_obj.last_login|date:"H:i" }}</small>
+                            </div>
+                        </div>
                     </div>
                 {% endif %}
             </div>
         </div>
         
+        <!-- Quick Actions -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-lightning text-primary me-2"></i>
+                    Быстрые действия
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'users:user_edit' user_obj.id %}?next=users:user_detail" class="btn btn-outline-primary">
+                        <i class="bi bi-pencil me-2"></i>
+                        Редактировать профиль
+                    </a>
+                    <a href="{% url 'users:user_list' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left me-2"></i>
+                        Назад к списку
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Account Management -->
         {% if user_obj != request.user %}
-            <div class="card mt-3">
+            <div class="card">
                 <div class="card-header">
                     <h5 class="card-title mb-0">
-                        <i class="bi bi-shield-exclamation"></i> Управление
+                        <i class="bi bi-shield-exclamation text-warning me-2"></i>
+                        Управление аккаунтом
                     </h5>
                 </div>
                 <div class="card-body">
+                    <p class="text-muted small mb-3">
+                        {% if user_obj.is_active %}
+                            Заблокировать доступ пользователя к системе
+                        {% else %}
+                            Разблокировать доступ пользователя к системе
+                        {% endif %}
+                    </p>
                     <form method="post" action="{% url 'users:user_toggle_block' user_obj.id %}" 
-                          onsubmit="return confirm('Вы уверены, что хотите {% if user_obj.role == 'blocked' %}разблокировать{% else %}заблокировать{% endif %} этого пользователя?')">
+                          onsubmit="return confirm('Вы уверены, что хотите {% if not user_obj.is_active %}разблокировать{% else %}заблокировать{% endif %} этого пользователя?')">
                         {% csrf_token %}
                         <button type="submit" 
-                                class="btn btn-{% if user_obj.role == 'blocked' %}success{% else %}warning{% endif %} w-100">
-                            <i class="bi bi-{% if user_obj.role == 'blocked' %}unlock{% else %}lock{% endif %}"></i>
-                            {% if user_obj.role == 'blocked' %}Разблокировать{% else %}Заблокировать{% endif %}
+                                class="btn btn-{% if not user_obj.is_active %}success{% else %}danger{% endif %} w-100">
+                            <i class="bi bi-{% if not user_obj.is_active %}unlock{% else %}lock{% endif %} me-2"></i>
+                            {% if not user_obj.is_active %}Разблокировать{% else %}Заблокировать{% endif %}
                         </button>
                     </form>
                 </div>
@@ -149,4 +253,129 @@
         {% endif %}
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<style>
+/* User Detail Specific Styles */
+.user-header {
+    background: linear-gradient(135deg, var(--bs-primary) 0%, var(--bs-primary-dark) 100%);
+    color: white;
+    padding: 3rem 0;
+    margin: -2rem -1.5rem 0 -1.5rem;
+    border-radius: 0 0 1rem 1rem;
+}
+
+.user-avatar-large {
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    font-size: 3rem;
+    color: white;
+}
+
+.user-name {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.user-role {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.info-item {
+    margin-bottom: 1.5rem;
+}
+
+.info-label {
+    display: block;
+    font-weight: 600;
+    color: var(--bs-gray-700);
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    color: var(--bs-gray-900);
+}
+
+.info-value i {
+    font-size: 1.1rem;
+}
+
+/* Card improvements */
+.card {
+    border: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 0.75rem;
+}
+
+.card-header {
+    background: var(--bs-gray-50);
+    border-bottom: 1px solid var(--bs-gray-200);
+    border-radius: 0.75rem 0.75rem 0 0 !important;
+    padding: 1.25rem 1.5rem;
+}
+
+.card-title {
+    font-weight: 600;
+    color: var(--bs-gray-800);
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Badge improvements */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+}
+
+/* Button improvements */
+.btn {
+    border-radius: 0.5rem;
+    font-weight: 500;
+    padding: 0.75rem 1.25rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .user-header {
+        margin: -2rem -1rem 0 -1rem;
+        padding: 2rem 0;
+    }
+    
+    .user-name {
+        font-size: 2rem;
+    }
+    
+    .user-avatar-large {
+        width: 60px;
+        height: 60px;
+        font-size: 2.5rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .info-item {
+        margin-bottom: 1rem;
+    }
+}
+</style>
 {% endblock %}
