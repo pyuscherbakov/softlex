@@ -871,3 +871,35 @@ p {
 .breadcrumb-item.active {
     color: var(--text-muted);
 }
+
+/* ===========================================
+   USER AVATAR STYLES
+   =========================================== */
+
+/* Аватарка в навигации */
+.navbar .user-avatar {
+    font-size: 1.5rem;
+    color: var(--text-inverse);
+}
+
+/* Аватарка в таблице пользователей */
+.table .user-avatar {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gray-100);
+    border-radius: 50%;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+/* Адаптивность для аватарки в таблице */
+@media (max-width: 768px) {
+    .table .user-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 1.25rem;
+    }
+}
