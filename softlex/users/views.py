@@ -151,6 +151,16 @@ def user_edit_view(request, user_id):
 
 
 @login_required
+def profile_view(request):
+    """Просмотр собственного профиля пользователя"""
+    context = {
+        'user_obj': request.user,
+    }
+    
+    return render(request, 'users/profile.html', context)
+
+
+@login_required
 @require_http_methods(["POST"])
 def user_toggle_block_view(request, user_id):
     """Блокировка/разблокировка пользователя"""
