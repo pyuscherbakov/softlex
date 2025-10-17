@@ -1,6 +1,6 @@
 # Makefile для Softlex
 
-.PHONY: help install test test-coverage test-unit test-integration lint format clean
+.PHONY: help install test test-coverage test-unit test-integration lint format collectstatic clean
 
 help: ## Показать справку
 	@echo "Доступные команды:"
@@ -29,6 +29,9 @@ lint: ## Запустить линтеры
 format: ## Форматировать код
 	uv run black softlex/
 	uv run isort softlex/
+
+collectstatic: ## Собрать статические файлы
+	uv run python softlex/manage.py collectstatic --noinput
 
 clean: ## Очистить временные файлы
 	find . -type f -name "*.pyc" -delete
