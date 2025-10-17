@@ -128,6 +128,7 @@ def user_detail_view(request, user_id):
     
     context = {
         'user_obj': user,  # user_obj чтобы не конфликтовать с request.user
+        'role_choices': User.ROLE_CHOICES,
     }
     
     return render(request, 'users/user_detail.html', context)
