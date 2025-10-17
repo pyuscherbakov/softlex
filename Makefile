@@ -1,96 +1,41 @@
-# Makefile для управления проектом softlex
+# Makefile для Softlex
 
-.PHONY: help build up down logs shell migrate createsuperuser clean restart test
+.PHONY: help install test test-coverage test-unit test-integration lint format clean
 
-# Показать справку
-help:
+help: ## Показать справку
 	@echo "Доступные команды:"
-	@echo "  build           - Собрать Docker образы"
-	@echo "  up              - Запустить все сервисы"
-	@echo "  down            - Остановить все сервисы"
-	@echo "  restart         - Перезапустить сервисы"
-	@echo "  logs            - Показать логи всех сервисов"
-	@echo "  logs-web        - Показать логи веб-сервиса"
-	@echo "  logs-db         - Показать логи базы данных"
-	@echo "  shell           - Подключиться к контейнеру веб-сервиса"
-	@echo "  shell-db        - Подключиться к контейнеру базы данных"
-	@echo "  migrate         - Выполнить миграции базы данных"
-	@echo "  createsuperuser - Создать суперпользователя"
-	@echo "  test            - Запустить тесты"
-	@echo "  clean           - Очистить контейнеры и volumes"
-	@echo "  clean-all       - Полная очистка (включая образы)"
-	@echo "  status          - Показать статус сервисов"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
-# Собрать образы
-build:
-	docker-compose build
+install: ## Установить зависимости для разработки
+	uv sync --extra dev
 
-# Запустить сервисы
-up:
-	docker-compose up -d
+test: ## Запустить все тесты
+	uv run pytest
 
-# Запустить сервисы в foreground режиме
-up-fg:
-	docker-compose up
+test-coverage: ## Запустить тесты с покрытием кода
+	uv run pytest --cov=softlex --cov-report=html --cov-report=term-missing --cov-fail-under=80
 
-# Остановить сервисы
-down:
-	docker-compose down
+test-unit: ## Запустить только unit тесты
+	uv run pytest -m unit
 
-# Перезапустить сервисы
-restart: down up
+test-integration: ## Запустить только интеграционные тесты
+	uv run pytest -m integration
 
-# Показать логи всех сервисов
-logs:
-	docker-compose logs -f
+lint: ## Запустить линтеры
+	uv run flake8 softlex/
+	uv run black --check softlex/
+	uv run isort --check-only softlex/
 
-# Показать логи веб-сервиса
-logs-web:
-	docker-compose logs -f web
+format: ## Форматировать код
+	uv run black softlex/
+	uv run isort softlex/
 
-# Показать логи базы данных
-logs-db:
-	docker-compose logs -f db
+clean: ## Очистить временные файлы
+	find . -type f -name "*.pyc" -delete
+	find . -type d -name "__pycache__" -delete
+	find . -type d -name "*.egg-info" -exec rm -rf {} +
+	rm -rf .pytest_cache
+	rm -rf htmlcov
+	rm -rf .coverage
 
-# Подключиться к контейнеру веб-сервиса
-shell:
-	docker-compose exec web bash
-
-# Подключиться к контейнеру базы данных
-shell-db:
-	docker-compose exec db psql -U admin -d sftlx
-
-# Выполнить миграции
-migrate:
-	docker-compose exec web uv run python softlex/manage.py migrate
-
-# Создать суперпользователя
-createsuperuser:
-	docker-compose exec web uv run python softlex/manage.py createsuperuser
-
-# Запустить тесты
-test:
-	docker-compose exec web uv run python softlex/manage.py test
-
-# Показать статус сервисов
-status:
-	docker-compose ps
-
-# Очистить контейнеры и volumes
-clean:
-	docker-compose down -v
-	docker system prune -f
-
-# Полная очистка (включая образы)
-clean-all: clean
-	docker-compose down --rmi all -v
-	docker system prune -af
-
-# Создать .env файл из примера
-setup:
-	cp env.example .env
-	@echo "Файл .env создан. Отредактируйте его при необходимости."
-
-# Быстрый старт (создать .env и запустить)
-start: setup up
-	@echo "Проект запущен! Доступен по адресу: http://localhost:8000"
+check: test-coverage lint ## Запустить все проверки
