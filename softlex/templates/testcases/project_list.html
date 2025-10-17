@@ -115,7 +115,7 @@
                                     <div class="stat-item">
                                         <i class="bi bi-list-check text-success"></i>
                                         <small class="d-block text-muted">Тест-кейсы</small>
-                                        <span class="fw-semibold">{{ project.testcase_set.count }}</span>
+                                        <span class="fw-semibold">{{ project.test_cases.count }}</span>
                                     </div>
                                 </div>
                                 <div class="col-4">
@@ -182,7 +182,7 @@
                                         </span>
                                     </td>
                                     <td>
-                                        <span class="badge bg-success">{{ project.testcase_set.count }}</span>
+                                        <span class="badge bg-success">{{ project.test_cases.count }}</span>
                                     </td>
                                     <td>
                                         <span class="badge bg-info">{{ project.members.count|add:1 }}</span>

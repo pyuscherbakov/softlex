@@ -78,48 +78,40 @@
 </div>
 
 <!-- Project Stats -->
-<div class="row mb-5">
-    <div class="col-md-3">
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="bi bi-list-check text-success"></i>
-            </div>
-            <div class="stat-content">
-                <h3 class="stat-number">{{ test_cases.count }}</h3>
-                <p class="stat-label">Тест-кейсов</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="bi bi-people text-info"></i>
-            </div>
-            <div class="stat-content">
-                <h3 class="stat-number">{{ project.members.count|add:1 }}</h3>
-                <p class="stat-label">Участников</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="bi bi-calendar text-warning"></i>
-            </div>
-            <div class="stat-content">
-                <h3 class="stat-number">{{ project.created_at|date:"d.m" }}</h3>
-                <p class="stat-label">Дата создания</p>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="bi bi-clock text-primary"></i>
-            </div>
-            <div class="stat-content">
-                <h3 class="stat-number">{{ project.updated_at|timesince }}</h3>
-                <p class="stat-label">Обновлен</p>
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body py-3">
+                <div class="row text-center">
+                    <div class="col-md-3 col-6">
+                        <div class="stat-item-compact">
+                            <i class="bi bi-list-check text-success me-2"></i>
+                            <small class="stat-label-compact">Тест-кейсов:</small>
+                            <span class="stat-number-compact">{{ test_cases.count }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-item-compact">
+                            <i class="bi bi-people text-info me-2"></i>
+                            <small class="stat-label-compact">Участников:</small>
+                            <span class="stat-number-compact">{{ project.members.count|add:1 }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-item-compact">
+                            <i class="bi bi-calendar text-warning me-2"></i>
+                            <small class="stat-label-compact">Создан:</small>
+                            <span class="stat-number-compact">{{ project.created_at|date:"d.m.Y" }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-6">
+                        <div class="stat-item-compact">
+                            <i class="bi bi-clock text-primary me-2"></i>
+                            <small class="stat-label-compact">Обновлен:</small>
+                            <span class="stat-number-compact">{{ project.updated_at|date:"d.m.Y" }}</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -141,9 +133,9 @@
             <div class="card-body">
                 {% if test_cases %}
                     <!-- Search and Filter -->
-                    <div class="row mb-4">
+                    <div class="row mb-4 align-items-center">
                         <div class="col-md-6">
-                            <div class="input-group">
+                            <div class="input-group search-filter-group">
                                 <span class="input-group-text">
                                     <i class="bi bi-search"></i>
                                 </span>
@@ -151,13 +143,13 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <select class="form-select" id="testcaseSort">
+                            <select class="form-select search-filter-group" id="testcaseSort">
                                 <option value="title">По названию</option>
                                 <option value="created">По дате создания</option>
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <div class="btn-group w-100" role="group">
+                            <div class="btn-group w-100 search-filter-group" role="group">
                                 <input type="radio" class="btn-check" name="testcaseView" id="testcaseGridView" autocomplete="off" checked>
                                 <label class="btn btn-outline-secondary" for="testcaseGridView">
                                     <i class="bi bi-grid-3x3-gap"></i>
@@ -445,41 +437,33 @@
     justify-content: flex-end;
 }
 
-/* Stats Cards */
-.stat-card {
-    background: var(--bg-primary);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius-lg);
-    padding: var(--space-6);
-    text-align: center;
+/* Compact Stats */
+.stat-item-compact {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-2);
+    border-radius: var(--border-radius);
     transition: all var(--transition-normal);
-    box-shadow: var(--shadow-sm);
 }
 
-.stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--primary-color);
+.stat-item-compact:hover {
+    background-color: var(--bg-tertiary);
 }
 
-.stat-icon {
-    font-size: 2.5rem;
-    margin-bottom: var(--space-3);
-}
-
-.stat-number {
-    font-size: var(--text-2xl);
+.stat-number-compact {
+    font-size: var(--text-lg);
     font-weight: 700;
     color: var(--text-primary);
-    margin-bottom: var(--space-1);
+    margin: 0 var(--space-1);
 }
 
-.stat-label {
+.stat-label-compact {
     color: var(--text-muted);
-    font-size: var(--text-sm);
-    margin-bottom: 0;
+    font-size: var(--text-xs);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    margin-right: var(--space-1);
 }
 
 /* Test Case Cards */
@@ -516,6 +500,59 @@
 .input-group-text:has(+ .form-control:focus) {
     border-color: var(--primary-color);
     background-color: var(--primary-light);
+}
+
+/* Ensure consistent height for form elements */
+.search-filter-group {
+    height: 38px !important;
+    display: flex;
+    align-items: center;
+}
+
+.input-group {
+    height: 38px;
+}
+
+.input-group .form-control {
+    height: 38px;
+    line-height: 1.5;
+    border-radius: 0 0.375rem 0.375rem 0;
+}
+
+.input-group-text {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem 0 0 0.375rem;
+}
+
+.form-select {
+    height: 38px !important;
+    line-height: 1.5;
+    padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+}
+
+.btn-group {
+    height: 38px;
+}
+
+.btn-group .btn {
+    height: 38px;
+    padding: 0.375rem 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0;
+}
+
+.btn-group .btn:first-child {
+    border-radius: 0.375rem 0 0 0.375rem;
+}
+
+.btn-group .btn:last-child {
+    border-radius: 0 0.375rem 0.375rem 0;
 }
 
 /* View Mode Toggle */
@@ -586,17 +623,13 @@
         margin-top: var(--space-4);
     }
     
-    .stat-card {
-        padding: var(--space-4);
-        margin-bottom: var(--space-3);
+    .stat-item-compact {
+        padding: var(--space-1);
+        margin-bottom: var(--space-2);
     }
     
-    .stat-icon {
-        font-size: 2rem;
-    }
-    
-    .stat-number {
-        font-size: var(--text-xl);
+    .stat-number-compact {
+        font-size: var(--text-base);
     }
 }
 

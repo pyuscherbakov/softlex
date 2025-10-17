@@ -32,7 +32,7 @@ def project_list(request):
         messages.error(request, 'Ваш аккаунт заблокирован')
         return redirect('users:login')
     
-    projects = get_accessible_projects(request.user)
+    projects = get_accessible_projects(request.user).prefetch_related('test_cases')
     
     # Обработка создания проекта
     if request.method == 'POST':

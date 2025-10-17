@@ -210,3 +210,6 @@ AGENTS.md
 
 # Playwright
 .playwright*
+
+# Django staticfiles (collected static files)
+staticfiles/

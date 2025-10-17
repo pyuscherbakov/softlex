@@ -243,7 +243,7 @@
             <div class="card-body">
                 <p class="text-muted small mb-0">
                     <i class="bi bi-info-circle me-1"></i>
-                    В этом проекте {{ test_case.project.testcase_set.count }} тест-кейсов
+                    В этом проекте {{ test_case.project.test_cases.count }} тест-кейсов
                 </p>
                 <div class="mt-3">
                     <a href="{% url 'testcases:project_detail' test_case.project.pk %}" class="btn btn-sm btn-outline-primary">
