@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Удалить {{ test_case.title }} - Softlex{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2><i class="bi bi-exclamation-triangle text-danger"></i> Удаление тест-кейса</h2>
+        <p class="text-muted">Вы уверены, что хотите удалить этот тест-кейс?</p>
+    </div>
+    <div>
+        <a href="{% url 'testcases:testcase_detail' test_case.pk %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Назад к тест-кейсу
+        </a>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Подтверждение удаления</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <strong>Внимание!</strong> Это действие нельзя отменить.
+                </div>
+                
+                <h5>Информация о тест-кейсе:</h5>
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h6 class="card-title">{{ test_case.title }}</h6>
+                        <p class="card-text">{{ test_case.description|default:"Описание отсутствует" }}</p>
+                        <small class="text-muted">
+                            <i class="bi bi-folder"></i> Проект: {{ test_case.project.name }}<br>
+                            <i class="bi bi-calendar"></i> Создан: {{ test_case.created_at|date:"d.m.Y H:i" }}<br>
+                            <i class="bi bi-person"></i> Создатель: {{ test_case.created_by.email }}
+                        </small>
+                    </div>
+                </div>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'testcases:testcase_detail' test_case.pk %}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Отмена
+                        </a>
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Да, удалить тест-кейс
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,428 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная - Softlex{% endblock %}
+{% block meta_description %}Добро пожаловать в Softlex - современную систему управления тестированием. Создавайте проекты, управляйте тест-кейсами и командами разработки.{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+{% if not user.is_authenticated %}
+<div class="hero">
+    <div class="container">
+        <div class="hero-content text-center">
+            <h1 class="animate-on-scroll">
+                <i class="bi bi-clipboard-check me-3"></i>
+                Добро пожаловать в Softlex
+            </h1>
+            <p class="lead animate-on-scroll">
+                Современная система управления тестированием программного обеспечения
+            </p>
+            <div class="hero-actions animate-on-scroll">
+                <a href="{% url 'users:login' %}" class="btn btn-light btn-lg me-3">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>
+                    Войти в систему
+                </a>
+                <a href="{% url 'users:register' %}" class="btn btn-outline-light btn-lg">
+                    <i class="bi bi-person-plus me-2"></i>
+                    Регистрация
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Main Content -->
+<div class="container my-5">
+    {% if user.is_authenticated %}
+        <!-- Welcome Section -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="welcome-card card border-0 shadow-lg">
+                    <div class="card-body p-5">
+                        <div class="row align-items-center">
+                            <div class="col-md-8">
+                                <h2 class="mb-3">
+                                    <i class="bi bi-person-circle text-primary me-3"></i>
+                                    Привет, {{ user.full_name }}!
+                                </h2>
+                                <p class="lead text-muted mb-4">
+                                    Добро пожаловать в вашу рабочую область.
+                                </p>
+                                <div class="d-flex flex-wrap gap-3">
+                                    <a href="{% url 'testcases:project_list' %}" class="btn btn-primary flex-fill">
+                                        <i class="bi bi-folder me-2"></i>
+                                        Проекты
+                                    </a>
+                                    <a href="{% url 'testcases:testcase_list' %}" class="btn btn-outline-primary flex-fill">
+                                        <i class="bi bi-list-check me-2"></i>
+                                        Тест-кейсы
+                                    </a>
+                                    {% if user.is_admin %}
+                                        <a href="{% url 'users:user_list' %}" class="btn btn-outline-secondary flex-fill">
+                                            <i class="bi bi-people me-2"></i>
+                                            Пользователи
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="stats-circle">
+                                    <i class="bi bi-graph-up text-white"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <h3 class="text-center mb-4">Быстрые действия</h3>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="action-card card h-100 border-0 shadow-sm">
+                            <div class="card-body text-center p-4">
+                                <div class="action-icon mb-3">
+                                    <i class="bi bi-folder-plus text-primary"></i>
+                                </div>
+                                <h5 class="card-title">Создать проект</h5>
+                                <p class="card-text text-muted">
+                                    Создайте новый проект для организации тест-кейсов
+                                </p>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#projectModal">
+                                    <i class="bi bi-plus me-2"></i>
+                                    Создать
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="action-card card h-100 border-0 shadow-sm">
+                            <div class="card-body text-center p-4">
+                                <div class="action-icon mb-3">
+                                    <i class="bi bi-list-check text-success"></i>
+                                </div>
+                                <h5 class="card-title">Новый тест-кейс</h5>
+                                <p class="card-text text-muted">
+                                    Добавьте новый тест-кейс в существующий проект
+                                </p>
+                                <a href="{% url 'testcases:testcase_list' %}" class="btn btn-success">
+                                    <i class="bi bi-plus me-2"></i>
+                                    Создать
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="action-card card h-100 border-0 shadow-sm">
+                            <div class="card-body text-center p-4">
+                                <div class="action-icon mb-3">
+                                    <i class="bi bi-people text-info"></i>
+                                </div>
+                                <h5 class="card-title">Управление командой</h5>
+                                <p class="card-text text-muted">
+                                    Пригласите участников и управляйте доступом
+                                </p>
+                                {% if user.is_admin %}
+                                    <a href="{% url 'users:user_list' %}" class="btn btn-info">
+                                        <i class="bi bi-people me-2"></i>
+                                        Управлять
+                                    </a>
+                                {% else %}
+                                    <span class="btn btn-outline-secondary disabled">
+                                        <i class="bi bi-lock me-2"></i>
+                                        Только для админов
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    {% else %}
+        <!-- Features for non-authenticated users -->
+        <div class="row">
+            <div class="col-12">
+                <h2 class="text-center mb-5">Почему выбирают Softlex?</h2>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="feature-card text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="bi bi-lightning-charge text-primary"></i>
+                            </div>
+                            <h5>Быстро и просто</h5>
+                            <p class="text-muted">
+                                Интуитивно понятный интерфейс позволяет быстро освоить систему
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="bi bi-shield-check text-success"></i>
+                            </div>
+                            <h5>Надежно и безопасно</h5>
+                            <p class="text-muted">
+                                Ваши данные защищены современными методами шифрования
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="feature-card text-center">
+                            <div class="feature-icon mb-3">
+                                <i class="bi bi-people text-info"></i>
+                            </div>
+                            <h5>Командная работа</h5>
+                            <p class="text-muted">
+                                Эффективное сотрудничество в команде разработки
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Project Creation Modal (if user is authenticated) -->
+{% if user.is_authenticated %}
+<div class="modal fade" id="projectModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-folder-plus me-2"></i>
+                    Создать новый проект
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{% url 'testcases:project_list' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="projectName" class="form-label">Название проекта</label>
+                        <input type="text" class="form-control" id="projectName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="projectDescription" class="form-label">Описание</label>
+                        <textarea class="form-control" id="projectDescription" name="description" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check-lg me-2"></i>
+                        Создать проект
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<style>
+/* Hero Section Styles */
+.hero {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #1e40af 100%);
+    color: var(--text-inverse);
+    padding: var(--space-20) 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") repeat;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+
+.hero h1 {
+    font-size: var(--text-5xl);
+    font-weight: 700;
+    margin-bottom: var(--space-6);
+    color: var(--text-inverse);
+}
+
+.hero p {
+    font-size: var(--text-xl);
+    margin-bottom: var(--space-8);
+    opacity: 0.9;
+}
+
+.hero-actions {
+    margin-top: var(--space-8);
+}
+
+/* Welcome Card */
+.welcome-card {
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-tertiary) 100%);
+}
+
+.stats-circle {
+    width: 120px;
+    height: 120px;
+    background: linear-gradient(135deg, var(--primary-color), #1e40af);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    box-shadow: var(--shadow-lg);
+}
+
+.stats-circle i {
+    font-size: 3rem;
+    color: var(--text-inverse);
+}
+
+/* Action Cards */
+.action-card {
+    transition: all var(--transition-normal);
+    border: 1px solid var(--border-color);
+}
+
+.action-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg) !important;
+}
+
+.action-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    box-shadow: var(--shadow);
+}
+
+.action-icon i {
+    font-size: 2rem;
+}
+
+/* Feature Cards */
+.feature-card {
+    padding: var(--space-6);
+    transition: all var(--transition-normal);
+}
+
+.feature-card:hover {
+    transform: translateY(-2px);
+}
+
+.feature-icon {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    box-shadow: var(--shadow);
+}
+
+.feature-icon i {
+    font-size: 1.5rem;
+}
+
+/* Animations */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease-out;
+}
+
+.animate-on-scroll.animated {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .hero h1 {
+        font-size: var(--text-4xl);
+    }
+    
+    .hero p {
+        font-size: var(--text-lg);
+    }
+    
+    .stats-circle {
+        width: 80px;
+        height: 80px;
+    }
+    
+    .stats-circle i {
+        font-size: 2rem;
+    }
+    
+    .action-icon {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .action-icon i {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .hero {
+        padding: var(--space-12) 0;
+    }
+    
+    .hero h1 {
+        font-size: var(--text-3xl);
+    }
+    
+    .hero-actions .btn {
+        display: block;
+        width: 100%;
+        margin-bottom: var(--space-3);
+    }
+    
+    .hero-actions .btn:last-child {
+        margin-bottom: 0;
+    }
+}
+</style>
+
+<script>
+// Animation on scroll
+document.addEventListener('DOMContentLoaded', function() {
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('animated');
+            }
+        });
+    }, observerOptions);
+    
+    document.querySelectorAll('.animate-on-scroll').forEach(el => {
+        observer.observe(el);
+    });
+});
+</script>
+{% endblock %}

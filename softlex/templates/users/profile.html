@@ -1,0 +1,658 @@
+{% extends 'base.html' %}
+
+{% block title %}Профиль - Softlex{% endblock %}
+{% block meta_description %}Управляйте личной информацией в Softlex. Просмотр и редактирование профиля, настройки аккаунта и системная информация.{% endblock %}
+
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'testcases:home' %}">
+                <i class="bi bi-house"></i> Главная
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="bi bi-person"></i> Профиль
+        </li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<!-- Header Section -->
+<div class="page-header mb-5">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="page-title">
+                <i class="bi bi-person-circle text-primary me-3"></i>
+                Профиль
+            </h1>
+            <p class="page-subtitle text-muted">
+                Управляйте личной информацией и настройками аккаунта
+            </p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'users:user_edit' user_obj.id %}?next=users:profile" class="btn btn-primary btn-lg">
+                <i class="bi bi-pencil me-2"></i>
+                Редактировать профиль
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Profile Overview -->
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card profile-overview">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-3 text-center mb-4 mb-md-0">
+                        <div class="profile-avatar">
+                            <i class="bi bi-person-circle"></i>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h2 class="profile-name mb-2">
+                            {% if user_obj.first_name or user_obj.last_name %}
+                                {{ user_obj.first_name }} {{ user_obj.last_name }}
+                            {% else %}
+                                {{ user_obj.email }}
+                            {% endif %}
+                        </h2>
+                        {% if user_obj.first_name or user_obj.last_name %}
+                            <p class="profile-email text-muted mb-3">{{ user_obj.email }}</p>
+                        {% endif %}
+                        <div class="profile-badges">
+                            <span class="badge bg-{% if user_obj.role == 'admin' %}danger{% else %}primary{% endif %} me-2">
+                                <i class="bi bi-{% if user_obj.role == 'admin' %}shield-check{% else %}person{% endif %} me-1"></i>
+                                {{ user_obj.get_role_display }}
+                            </span>
+                            {% if user_obj.is_active %}
+                                <span class="badge bg-success">
+                                    <i class="bi bi-check-circle me-1"></i>
+                                    Активен
+                                </span>
+                            {% else %}
+                                <span class="badge bg-danger">
+                                    <i class="bi bi-x-circle me-1"></i>
+                                    Заблокирован
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-md-end">
+                        <div class="profile-stats">
+                            <div class="stat-item">
+                                <div class="stat-value">{{ user_obj.date_joined|date:"d.m.Y" }}</div>
+                                <div class="stat-label">Дата регистрации</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content -->
+<div class="row">
+    <!-- Left Column -->
+    <div class="col-lg-8">
+        <!-- Personal Information -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-person-circle text-primary me-2"></i>
+                    Личная информация
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="info-label">Email адрес</label>
+                            <div class="info-value">
+                                <i class="bi bi-envelope me-2 text-muted"></i>
+                                <span class="fw-semibold">{{ user_obj.email }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="info-label">Полное имя</label>
+                            <div class="info-value">
+                                <i class="bi bi-person me-2 text-muted"></i>
+                                {% if user_obj.first_name or user_obj.last_name %}
+                                    <span class="fw-semibold">{{ user_obj.first_name }} {{ user_obj.last_name }}</span>
+                                {% else %}
+                                    <span class="text-muted">Не указано</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Information -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-shield-check text-primary me-2"></i>
+                    Информация об аккаунте
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="info-label">Роль в системе</label>
+                            <div class="info-value">
+                                <span class="badge bg-{% if user_obj.role == 'admin' %}danger{% else %}primary{% endif %} fs-6">
+                                    <i class="bi bi-{% if user_obj.role == 'admin' %}shield-check{% else %}person{% endif %} me-1"></i>
+                                    {{ user_obj.get_role_display }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="info-item">
+                            <label class="info-label">Статус аккаунта</label>
+                            <div class="info-value">
+                                {% if user_obj.is_active %}
+                                    <span class="badge bg-success fs-6">
+                                        <i class="bi bi-check-circle me-1"></i>
+                                        Активен
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-danger fs-6">
+                                        <i class="bi bi-x-circle me-1"></i>
+                                        Заблокирован
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Information -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-shield-lock text-warning me-2"></i>
+                    Безопасность
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="info-item">
+                    <label class="info-label">Пароль</label>
+                    <div class="info-value">
+                        <i class="bi bi-key me-2 text-muted"></i>
+                        <span class="text-muted me-3">••••••••</span>
+                        <a href="{% url 'users:user_edit' user_obj.id %}?next=users:profile" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-pencil me-1"></i>
+                            Изменить пароль
+                        </a>
+                    </div>
+                </div>
+                <div class="alert alert-info mt-3 mb-0">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <small>Для изменения пароля используйте кнопку "Редактировать профиль" в шапке страницы</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right Column -->
+    <div class="col-lg-4">
+        <!-- Activity Timeline -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-clock-history text-primary me-2"></i>
+                    Активность
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-marker bg-success">
+                            <i class="bi bi-calendar-plus"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h6 class="timeline-title">Регистрация в системе</h6>
+                            <p class="timeline-text">
+                                <span class="fw-semibold">{{ user_obj.date_joined|date:"d.m.Y" }}</span>
+                                <br>
+                                <small class="text-muted">{{ user_obj.date_joined|date:"H:i" }}</small>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    {% if user_obj.last_login_date %}
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-info">
+                                <i class="bi bi-box-arrow-in-right"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6 class="timeline-title">Последняя авторизация</h6>
+                                <p class="timeline-text">
+                                    <span class="fw-semibold">{{ user_obj.last_login_date|date:"d.m.Y" }}</span>
+                                    <br>
+                                    <small class="text-muted">{{ user_obj.last_login_date|date:"H:i" }}</small>
+                                </p>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="timeline-item">
+                            <div class="timeline-marker bg-secondary">
+                                <i class="bi bi-dash-circle"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6 class="timeline-title">Последняя авторизация</h6>
+                                <p class="timeline-text text-muted">
+                                    <small>Никогда не входил в систему</small>
+                                </p>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Quick Actions -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-lightning text-primary me-2"></i>
+                    Быстрые действия
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{% url 'users:user_edit' user_obj.id %}?next=users:profile" class="btn btn-outline-primary">
+                        <i class="bi bi-pencil me-2"></i>
+                        Редактировать профиль
+                    </a>
+                    <a href="{% url 'testcases:home' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-house me-2"></i>
+                        На главную
+                    </a>
+                    <a href="{% url 'users:user_list' %}" class="btn btn-outline-info">
+                        <i class="bi bi-people me-2"></i>
+                        Все пользователи
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- System Information -->
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="bi bi-gear text-primary me-2"></i>
+                    Системная информация
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="info-item mb-3">
+                    <label class="info-label">ID пользователя</label>
+                    <div class="info-value">
+                        <code class="text-muted">{{ user_obj.id }}</code>
+                    </div>
+                </div>
+                <div class="info-item mb-3">
+                    <label class="info-label">Права доступа</label>
+                    <div class="info-value">
+                        {% if user_obj.is_staff %}
+                            <span class="badge bg-warning me-1">Персонал</span>
+                        {% endif %}
+                        {% if user_obj.is_superuser %}
+                            <span class="badge bg-danger">Суперпользователь</span>
+                        {% endif %}
+                        {% if not user_obj.is_staff and not user_obj.is_superuser %}
+                            <span class="badge bg-secondary">Обычный пользователь</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="info-item">
+                    <label class="info-label">Последнее обновление</label>
+                    <div class="info-value">
+                        <small class="text-muted">
+                            {{ user_obj.date_joined|date:"d.m.Y H:i" }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<style>
+/* Profile Page Specific Styles */
+
+/* Page Header */
+.page-header {
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-tertiary) 100%);
+    padding: var(--space-6);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.page-title {
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    margin-bottom: var(--space-2);
+    color: var(--text-primary);
+}
+
+.page-subtitle {
+    font-size: var(--text-lg);
+    margin-bottom: 0;
+}
+
+/* Profile Overview Card */
+.profile-overview {
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-tertiary) 100%);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary-color) 0%, #1e40af 100%);
+    border-radius: 50%;
+    font-size: 4rem;
+    color: white;
+    margin: 0 auto;
+    box-shadow: var(--shadow-md);
+}
+
+.profile-name {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.profile-email {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+}
+
+.profile-badges .badge {
+    font-size: 0.875rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+}
+
+.profile-stats {
+    text-align: center;
+}
+
+.stat-item {
+    padding: 1rem;
+    background: var(--bg-tertiary);
+    border-radius: var(--border-radius-lg);
+    border: 1px solid var(--border-color);
+}
+
+.stat-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Info Items */
+.info-item {
+    margin-bottom: 1.5rem;
+}
+
+.info-label {
+    display: block;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    color: var(--gray-900);
+}
+
+.info-value i {
+    font-size: 1.1rem;
+    width: 20px;
+    text-align: center;
+}
+
+/* Timeline */
+.timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 1rem;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border-color);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 2rem;
+    padding-left: 2rem;
+}
+
+.timeline-marker {
+    position: absolute;
+    left: -1.5rem;
+    top: 0.25rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.875rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.timeline-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.timeline-text {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 0;
+}
+
+/* Card improvements */
+.card {
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    border-radius: var(--border-radius-lg);
+    transition: all var(--transition-normal);
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.card-header {
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-color);
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0 !important;
+    padding: 1.25rem 1.5rem;
+}
+
+.card-title {
+    font-weight: 600;
+    color: var(--gray-800);
+    font-size: 1.1rem;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Badge improvements */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+}
+
+/* Button improvements */
+.btn {
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    transition: all var(--transition-fast);
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+/* Alert improvements */
+.alert {
+    border: none;
+    border-radius: var(--border-radius);
+    padding: 1rem 1.25rem;
+}
+
+.alert-info {
+    background-color: var(--info-light);
+    color: var(--info-color);
+    border-left: 4px solid var(--info-color);
+}
+
+/* Code styling */
+code {
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--border-radius-sm);
+    font-size: 0.875rem;
+    border: 1px solid var(--border-color);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .page-header {
+        padding: var(--space-4);
+    }
+    
+    .page-title {
+        font-size: var(--text-2xl);
+    }
+    
+    .page-subtitle {
+        font-size: var(--text-base);
+    }
+    
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        font-size: 3rem;
+    }
+    
+    .profile-name {
+        font-size: 1.5rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .info-item {
+        margin-bottom: 1rem;
+    }
+    
+    .timeline {
+        padding-left: 1.5rem;
+    }
+    
+    .timeline::before {
+        left: 0.75rem;
+    }
+    
+    .timeline-item {
+        padding-left: 1.5rem;
+    }
+    
+    .timeline-marker {
+        left: -1rem;
+        width: 1.5rem;
+        height: 1.5rem;
+        font-size: 0.75rem;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .btn-group .btn {
+        border-radius: var(--border-radius) !important;
+        margin-bottom: var(--space-2);
+    }
+    
+    .btn-group .btn:last-child {
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 576px) {
+    .profile-overview .row {
+        text-align: center;
+    }
+    
+    .profile-stats {
+        margin-top: 1rem;
+    }
+    
+    .stat-item {
+        padding: 0.75rem;
+    }
+    
+    .stat-value {
+        font-size: 1.1rem;
+    }
+}
+</style>
+{% endblock %}

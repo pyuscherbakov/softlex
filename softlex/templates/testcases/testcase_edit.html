@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}Редактировать {{ test_case.title }} - Softlex{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2><i class="bi bi-pencil"></i> Редактировать тест-кейс</h2>
+        <p class="text-muted">{{ test_case.title }}</p>
+    </div>
+    <div>
+        <a href="{% url 'testcases:testcase_detail' test_case.pk %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Назад к тест-кейсу
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-pencil-square"></i> Редактирование тест-кейса</h5>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.title.id_for_label }}" class="form-label">{{ form.title.label }}</label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.title.errors %}
+                                        <div><small>{{ error }}</small></div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="{{ form.project.id_for_label }}" class="form-label">{{ form.project.label }}</label>
+                            {{ form.project }}
+                            {% if form.project.errors %}
+                                <div class="text-danger">
+                                    {% for error in form.project.errors %}
+                                        <div><small>{{ error }}</small></div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.description.id_for_label }}" class="form-label">{{ form.description.label }}</label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                            <div class="text-danger">
+                                    {% for error in form.description.errors %}
+                                        <div><small>{{ error }}</small></div>
+                                    {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.preconditions.id_for_label }}" class="form-label">{{ form.preconditions.label }}</label>
+                        {{ form.preconditions }}
+                        {% if form.preconditions.errors %}
+                            <div class="text-danger">
+                                    {% for error in form.preconditions.errors %}
+                                        <div><small>{{ error }}</small></div>
+                                    {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.steps.id_for_label }}" class="form-label">{{ form.steps.label }}</label>
+                        {{ form.steps }}
+                        {% if form.steps.errors %}
+                            <div class="text-danger">
+                                    {% for error in form.steps.errors %}
+                                        <div><small>{{ error }}</small></div>
+                                    {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        <label for="{{ form.expected_result.id_for_label }}" class="form-label">{{ form.expected_result.label }}</label>
+                        {{ form.expected_result }}
+                        {% if form.expected_result.errors %}
+                            <div class="text-danger">
+                                    {% for error in form.expected_result.errors %}
+                                        <div><small>{{ error }}</small></div>
+                                    {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}
+                                <div><small>{{ error }}</small></div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url 'testcases:testcase_detail' test_case.pk %}" class="btn btn-secondary">
+                            <i class="bi bi-x-circle"></i> Отмена
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle"></i> Сохранить изменения
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

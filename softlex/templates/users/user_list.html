@@ -1,0 +1,391 @@
+{% extends 'base.html' %}
+
+{% block title %}Пользователи - Softlex{% endblock %}
+{% block meta_description %}Управляйте пользователями в Softlex. Создавайте, редактируйте и управляйте доступом пользователей системы.{% endblock %}
+
+{% block breadcrumbs %}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="{% url 'testcases:home' %}">
+                <i class="bi bi-house"></i> Главная
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            <i class="bi bi-people me-2"></i> Пользователи
+        </li>
+    </ol>
+</nav>
+{% endblock %}
+
+{% block content %}
+<!-- Скрытый CSRF токен для JavaScript -->
+{% csrf_token %}
+
+<!-- Header Section -->
+<div class="page-header mb-5">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h1 class="page-title">
+                <i class="bi bi-people text-primary me-3"></i>
+                Пользователи
+            </h1>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'users:register' %}" class="btn btn-primary btn-lg">
+                <i class="bi bi-plus-lg me-2"></i>
+                Добавить пользователя
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h5 class="mb-0">
+            <i class="bi bi-funnel text-primary me-2"></i>
+            Поиск и фильтры
+        </h5>
+    </div>
+    <div class="card-body">
+        <form method="get" class="row g-3">
+            <div class="col-md-4">
+                <label for="search" class="form-label">Поиск</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-search"></i>
+                    </span>
+                    <input type="text" class="form-control" id="search" name="search" 
+                           value="{{ search }}" placeholder="Email, имя или фамилия">
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label for="role" class="form-label">Роль</label>
+                <select class="form-select" id="role" name="role">
+                    <option value="">Все роли</option>
+                    {% for value, label in role_choices %}
+                        <option value="{{ value }}" {% if role_filter == value %}selected{% endif %}>
+                            {{ label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="status" class="form-label">Статус</label>
+                <select class="form-select" id="status" name="status">
+                    <option value="">Все статусы</option>
+                    <option value="active" {% if status_filter == 'active' %}selected{% endif %}>Активные</option>
+                    <option value="inactive" {% if status_filter == 'inactive' %}selected{% endif %}>Заблокированные</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <div class="d-grid gap-2 w-100">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-search me-1"></i>
+                        Найти
+                    </button>
+                    <a href="{% url 'users:user_list' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-clockwise me-1"></i>
+                        Сбросить
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if page_obj %}
+    <!-- Users Table -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+                <i class="bi bi-list text-primary me-2"></i>
+                Пользователи
+            </h5>
+            <span class="badge bg-primary">{{ page_obj|length }}</span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>Пользователь</th>
+                            <th>Роль</th>
+                            <th>Статус</th>
+                            <th>Регистрация</th>
+                            <th>Последний вход</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in page_obj %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="user-avatar me-3">
+                                            <i class="bi bi-person-circle text-primary"></i>
+                                        </div>
+                                        <div>
+                                            <div class="fw-semibold">
+                                                <a href="{% url 'users:user_detail' user.id %}" class="text-decoration-none">
+                                                    {{ user.email }}
+                                                </a>
+                                            </div>
+                                            <small class="text-muted">
+                                                {% if user.first_name or user.last_name %}
+                                                    {{ user.first_name }} {{ user.last_name }}
+                                                {% else %}
+                                                    Имя не указано
+                                                {% endif %}
+                                            </small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="badge bg-{% if user.role == 'admin' %}danger{% else %}primary{% endif %}">
+                                        <i class="bi bi-{% if user.role == 'admin' %}shield-check{% else %}person{% endif %} me-1"></i>
+                                        {{ user.get_role_display }}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if user.is_active %}
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-check-circle me-1"></i>
+                                            Активен
+                                        </span>
+                                    {% else %}
+                                        <span class="badge bg-danger">
+                                            <i class="bi bi-x-circle me-1"></i>
+                                            Заблокирован
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="d-flex flex-column">
+                                        <span>{{ user.date_joined|date:"d.m.Y" }}</span>
+                                        <small class="text-muted">{{ user.date_joined|date:"H:i" }}</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if user.last_login_date %}
+                                        <div class="d-flex flex-column">
+                                            <span>{{ user.last_login_date|date:"d.m.Y" }}</span>
+                                            <small class="text-muted">{{ user.last_login_date|date:"H:i" }}</small>
+                                        </div>
+                                    {% else %}
+                                        <span class="text-muted">
+                                            <i class="bi bi-dash-circle me-1"></i>
+                                            Никогда
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{% url 'users:user_detail' user.id %}" 
+                                           class="btn btn-outline-primary" title="Просмотр">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        <a href="{% url 'users:user_edit' user.id %}?next=users:user_list" 
+                                           class="btn btn-outline-secondary" title="Редактировать">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        {% if user != request.user %}
+                                            <button type="button" 
+                                                    class="btn btn-outline-{% if not user.is_active %}success{% else %}danger{% endif %}" 
+                                                    title="{% if not user.is_active %}Разблокировать{% else %}Заблокировать{% endif %}"
+                                                    onclick="toggleUserBlock({{ user.id }}, '{{ user.is_active|yesno:"true,false" }}', '{{ user.email }}')">
+                                                <i class="bi bi-{% if not user.is_active %}unlock{% else %}lock{% endif %}"></i>
+                                            </button>
+                                        {% else %}
+                                            <span class="btn btn-outline-secondary disabled" title="Нельзя заблокировать себя">
+                                                <i class="bi bi-shield-check"></i>
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Пагинация -->
+    {% if page_obj.has_other_pages %}
+        <nav aria-label="Навигация по страницам" class="mt-4">
+            <ul class="pagination justify-content-center">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page=1{% if search %}&search={{ search }}{% endif %}{% if role_filter %}&role={{ role_filter }}{% endif %}">
+                            <i class="bi bi-chevron-double-left"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if search %}&search={{ search }}{% endif %}{% if role_filter %}&role={{ role_filter }}{% endif %}">
+                            <i class="bi bi-chevron-left"></i>
+                        </a>
+                    </li>
+                {% endif %}
+
+                <li class="page-item active">
+                    <span class="page-link">
+                        Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+                    </span>
+                </li>
+
+                {% if page_obj.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if role_filter %}&role={{ role_filter }}{% endif %}">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}{% if role_filter %}&role={{ role_filter }}{% endif %}">
+                            <i class="bi bi-chevron-double-right"></i>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+
+{% else %}
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="bi bi-people"></i>
+        </div>
+        <h4 class="empty-state-title">Пользователи не найдены</h4>
+        <p class="empty-state-text">Попробуйте изменить параметры поиска или добавить нового пользователя</p>
+        <a href="{% url 'users:register' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg me-2"></i>
+            Добавить пользователя
+        </a>
+    </div>
+{% endif %}
+{% endblock %}
+
+{% block extra_js %}
+<style>
+/* User List Specific Styles */
+
+.page-header {
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-tertiary) 100%);
+    padding: var(--space-6);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.page-title {
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    margin-bottom: var(--space-2);
+    color: var(--text-primary);
+}
+
+.page-subtitle {
+    font-size: var(--text-lg);
+    margin-bottom: 0;
+}
+
+/* Table improvements */
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: var(--gray-700);
+    background: var(--gray-50);
+}
+
+.table td {
+    vertical-align: middle;
+    padding: 1rem 0.75rem;
+}
+
+.table tbody tr:hover {
+    background-color: var(--gray-50);
+}
+
+/* Button group improvements */
+.btn-group .btn {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+    min-width: 38px;
+}
+
+.btn-group .btn i {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* Badge improvements */
+.badge {
+    font-size: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+}
+
+/* Form controls height alignment */
+.form-control,
+.form-select {
+    height: 38px; /* Consistent height for all form controls */
+}
+
+.input-group .form-control {
+    height: 38px; /* Same height as form-select */
+}
+
+.input-group-text {
+    height: 38px; /* Same height as form-select */
+    display: flex;
+    align-items: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .page-header {
+        padding: var(--space-4);
+    }
+    
+    .page-title {
+        font-size: var(--text-2xl);
+    }
+    
+    .page-subtitle {
+        font-size: var(--text-base);
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+}
+</style>
+
+<script>
+function toggleUserBlock(userId, isActive, userEmail) {
+    const action = isActive === 'false' ? 'разблокировать' : 'заблокировать';
+    
+    if (confirm(`Вы уверены, что хотите ${action} пользователя ${userEmail}?`)) {
+        // Создаем скрытую форму для отправки POST-запроса
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/user/${userId}/toggle-block/`;
+        
+        // Добавляем CSRF токен
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+        
+        // Добавляем форму в DOM и отправляем
+        document.body.appendChild(form);
+        form.submit();
+    }
+}
+</script>
+{% endblock %}
