@@ -54,160 +54,175 @@
     </div>
 </div>
 
-<div class="row justify-content-center">
-    <div class="col-lg-8">
-        <!-- Main Form Card -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-person-gear text-primary me-2"></i>
-                    Редактирование: {{ user_obj.email }}
-                </h5>
-            </div>
-            <div class="card-body">
-                <form method="post" class="needs-validation" novalidate>
-                    {% csrf_token %}
-                    {% if request.GET.next %}
-                        <input type="hidden" name="next" value="{{ request.GET.next }}">
-                    {% endif %}
-                    
-                    <!-- Basic Information -->
-                    <div class="row g-4 mb-4">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="{{ form.email.id_for_label }}" class="form-label">
-                                    <i class="bi bi-envelope me-2 text-muted"></i>
-                                    {{ form.email.label }} <span class="text-danger">*</span>
-                                </label>
-                                {{ form.email }}
-                                {% if form.email.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {% for error in form.email.errors %}
-                                            <div><small>{{ error }}</small></div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="{{ form.role.id_for_label }}" class="form-label">
-                                    <i class="bi bi-shield-check me-2 text-muted"></i>
-                                    {{ form.role.label }} <span class="text-danger">*</span>
-                                </label>
-                                {{ form.role }}
-                                {% if form.role.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {% for error in form.role.errors %}
-                                            <div><small>{{ error }}</small></div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
+<!-- Main Content -->
+<div class="container-fluid">
+    <div class="row">
+        <!-- Left Column - Main Form -->
+        <div class="col-lg-8">
+            <!-- Edit Form Card -->
+            <div class="info-card mb-4">
+                <div class="info-card-header">
+                    <div class="info-card-icon">
+                        <i class="bi bi-person-gear"></i>
                     </div>
-                    
-                    <!-- Personal Information -->
-                    <div class="row g-4 mb-4">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="{{ form.first_name.id_for_label }}" class="form-label">
-                                    <i class="bi bi-person me-2 text-muted"></i>
-                                    {{ form.first_name.label }}
-                                </label>
-                                {{ form.first_name }}
-                                {% if form.first_name.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {% for error in form.first_name.errors %}
-                                            <div><small>{{ error }}</small></div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="{{ form.last_name.id_for_label }}" class="form-label">
-                                    <i class="bi bi-person me-2 text-muted"></i>
-                                    {{ form.last_name.label }}
-                                </label>
-                                {{ form.last_name }}
-                                {% if form.last_name.errors %}
-                                    <div class="invalid-feedback d-block">
-                                        {% for error in form.last_name.errors %}
-                                            <div><small>{{ error }}</small></div>
-                                        {% endfor %}
-                                    </div>
-                                {% endif %}
-                            </div>
-                        </div>
+                    <div class="info-card-title">
+                        <h3>Редактирование профиля</h3>
+                        <p>Изменение информации пользователя {{ user_obj.email }}</p>
                     </div>
-                    
-                    <!-- Form Errors -->
-                    {% if form.non_field_errors %}
-                        <div class="alert alert-danger">
-                            <i class="bi bi-exclamation-triangle me-2"></i>
-                            {% for error in form.non_field_errors %}
-                                <div><small>{{ error }}</small></div>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                    
-                    <!-- Action Buttons -->
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="btn-group">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-check-lg me-2"></i> Сохранить изменения
-                            </button>
-                            <a href="{% if request.GET.next == 'users:user_list' %}{% url 'users:user_list' %}{% else %}{% url 'users:user_detail' user_obj.id %}{% endif %}" class="btn btn-outline-secondary">
-                                <i class="bi bi-x-lg me-2"></i> Отмена
-                            </a>
+                </div>
+                <div class="info-card-body">
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        {% if request.GET.next %}
+                            <input type="hidden" name="next" value="{{ request.GET.next }}">
+                        {% endif %}
+                        
+                        <!-- Basic Information -->
+                        <div class="form-section mb-5">
+                            <h5 class="form-section-title">
+                                <i class="bi bi-person-circle me-2"></i>
+                                Основная информация
+                            </h5>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="{{ form.email.id_for_label }}" class="form-label">
+                                            <i class="bi bi-envelope me-2 text-muted"></i>
+                                            {{ form.email.label }} <span class="text-danger">*</span>
+                                        </label>
+                                        {{ form.email }}
+                                        {% if form.email.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.email.errors %}
+                                                    <div><small>{{ error }}</small></div>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="{{ form.role.id_for_label }}" class="form-label">
+                                            <i class="bi bi-shield-check me-2 text-muted"></i>
+                                            {{ form.role.label }} <span class="text-danger">*</span>
+                                        </label>
+                                        {{ form.role }}
+                                        {% if form.role.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.role.errors %}
+                                                    <div><small>{{ error }}</small></div>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         
-                        {% if user_obj != request.user %}
-                            <div>
-                                <a href="{% url 'users:user_toggle_block' user_obj.id %}" 
-                                   class="btn btn-{% if not user_obj.is_active %}success{% else %}danger{% endif %}"
-                                   onclick="return confirm('Вы уверены, что хотите {% if not user_obj.is_active %}разблокировать{% else %}заблокировать{% endif %} этого пользователя?')">
-                                    <i class="bi bi-{% if not user_obj.is_active %}unlock{% else %}lock{% endif %} me-2"></i>
-                                    {% if not user_obj.is_active %}Разблокировать{% else %}Заблокировать{% endif %}
-                                </a>
+                        <!-- Personal Information -->
+                        <div class="form-section mb-5">
+                            <h5 class="form-section-title">
+                                <i class="bi bi-person me-2"></i>
+                                Личная информация
+                            </h5>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="{{ form.first_name.id_for_label }}" class="form-label">
+                                            <i class="bi bi-person me-2 text-muted"></i>
+                                            {{ form.first_name.label }}
+                                        </label>
+                                        {{ form.first_name }}
+                                        {% if form.first_name.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.first_name.errors %}
+                                                    <div><small>{{ error }}</small></div>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="{{ form.last_name.id_for_label }}" class="form-label">
+                                            <i class="bi bi-person me-2 text-muted"></i>
+                                            {{ form.last_name.label }}
+                                        </label>
+                                        {{ form.last_name }}
+                                        {% if form.last_name.errors %}
+                                            <div class="invalid-feedback d-block">
+                                                {% for error in form.last_name.errors %}
+                                                    <div><small>{{ error }}</small></div>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Form Errors -->
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                {% for error in form.non_field_errors %}
+                                    <div><small>{{ error }}</small></div>
+                                {% endfor %}
                             </div>
                         {% endif %}
-                    </div>
-                </form>
+                        
+                        <!-- Action Buttons -->
+                        <div class="form-actions">
+                            <div class="btn-group">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check-lg me-2"></i> Сохранить изменения
+                                </button>
+                                <a href="{% if request.GET.next == 'users:user_list' %}{% url 'users:user_list' %}{% else %}{% url 'users:user_detail' user_obj.id %}{% endif %}" class="btn btn-outline-secondary">
+                                    <i class="bi bi-x-lg me-2"></i> Отмена
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
         
-        <!-- User Information Card -->
-        <div class="card">
-            <div class="card-header">
-                <h5 class="card-title mb-0">
-                    <i class="bi bi-info-circle text-primary me-2"></i>
-                    Дополнительная информация
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="row g-4">
-                    <div class="col-md-6">
+        <!-- Right Column - User Info & Actions -->
+        <div class="col-lg-4">
+            <!-- User Information Card -->
+            <div class="info-card mb-4">
+                <div class="info-card-header">
+                    <div class="info-card-icon">
+                        <i class="bi bi-info-circle"></i>
+                    </div>
+                    <div class="info-card-title">
+                        <h3>Информация о пользователе</h3>
+                        <p>Дополнительные данные</p>
+                    </div>
+                </div>
+                <div class="info-card-body">
+                    <div class="info-grid">
                         <div class="info-item">
-                            <label class="info-label">Дата регистрации</label>
+                            <div class="info-label">
+                                <i class="bi bi-calendar-plus me-2"></i>
+                                Дата регистрации
+                            </div>
                             <div class="info-value">
-                                <i class="bi bi-calendar-plus me-2 text-muted"></i>
                                 <div class="d-flex flex-column">
                                     <span>{{ user_obj.date_joined|date:"d.m.Y" }}</span>
                                     <small class="text-muted">{{ user_obj.date_joined|date:"H:i" }}</small>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
+                        
                         <div class="info-item">
-                            <label class="info-label">Последняя авторизация</label>
+                            <div class="info-label">
+                                <i class="bi bi-clock-history me-2"></i>
+                                Последняя авторизация
+                            </div>
                             <div class="info-value">
-                                <i class="bi bi-clock-history me-2 text-muted"></i>
                                 {% if user_obj.last_login_date %}
                                     <div class="d-flex flex-column">
                                         <span>{{ user_obj.last_login_date|date:"d.m.Y" }}</span>
@@ -218,9 +233,54 @@
                                 {% endif %}
                             </div>
                         </div>
+                        
+                        <div class="info-item">
+                            <div class="info-label">
+                                <i class="bi bi-{% if user_obj.is_active %}check-circle{% else %}x-circle{% endif %} me-2"></i>
+                                Статус аккаунта
+                            </div>
+                            <div class="info-value">
+                                <span class="badge status-badge {% if user_obj.is_active %}active{% else %}inactive{% endif %}">
+                                    {% if user_obj.is_active %}Активен{% else %}Заблокирован{% endif %}
+                                </span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+            
+            <!-- Account Management -->
+            {% if user_obj != request.user %}
+            <div class="info-card danger-card">
+                <div class="info-card-header">
+                    <div class="info-card-icon danger">
+                        <i class="bi bi-shield-exclamation"></i>
+                    </div>
+                    <div class="info-card-title">
+                        <h3>Управление аккаунтом</h3>
+                        <p>Опасные действия</p>
+                    </div>
+                </div>
+                <div class="info-card-body">
+                    <div class="alert alert-{% if not user_obj.is_active %}info{% else %}warning{% endif %} mb-3">
+                        <i class="bi bi-{% if not user_obj.is_active %}info-circle{% else %}exclamation-triangle{% endif %} me-2"></i>
+                        {% if user_obj.is_active %}
+                            Заблокировать доступ пользователя к системе
+                        {% else %}
+                            Разблокировать доступ пользователя к системе
+                        {% endif %}
+                    </div>
+                    <form method="post" action="{% url 'users:user_toggle_block' user_obj.id %}" 
+                          onsubmit="return confirm('Вы уверены, что хотите {% if not user_obj.is_active %}разблокировать{% else %}заблокировать{% endif %} этого пользователя?')">
+                        {% csrf_token %}
+                        <button type="submit" class="action-btn {% if not user_obj.is_active %}success{% else %}danger{% endif %} w-100">
+                            <i class="bi bi-{% if not user_obj.is_active %}unlock{% else %}lock{% endif %} me-2"></i>
+                            {% if not user_obj.is_active %}Разблокировать{% else %}Заблокировать{% endif %}
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -228,122 +288,249 @@
 
 {% block extra_js %}
 <style>
-/* User Edit Specific Styles */
+/* ===========================================
+   USER EDIT PAGE STYLES
+   =========================================== */
+
+/* Page Header */
 .page-header {
-    background: linear-gradient(135deg, var(--primary-color) 0%, #1e40af 100%);
-    color: white;
-    padding: 3rem 0;
-    margin: -2rem -1.5rem 0 -1.5rem;
-    border-radius: 0 0 1rem 1rem;
+    background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-tertiary) 100%);
+    padding: var(--space-6);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
 }
 
 .page-title {
-    font-size: 2.5rem;
+    font-size: var(--text-3xl);
     font-weight: 700;
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--space-2);
+    color: var(--text-primary);
 }
 
 .page-subtitle {
-    font-size: 1.1rem;
-    opacity: 0.9;
+    font-size: var(--text-lg);
+    margin-bottom: 0;
+    color: var(--text-muted);
+}
+
+/* Info Cards */
+.info-card {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-normal);
+    overflow: hidden;
+}
+
+.info-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--border-color-hover);
+}
+
+.info-card.danger-card {
+    border-color: var(--danger-color);
+    background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%);
+}
+
+.info-card-header {
+    display: flex;
+    align-items: center;
+    padding: var(--space-6);
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-color);
+    gap: var(--space-4);
+}
+
+.info-card-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--primary-color);
+    color: var(--text-inverse);
+    border-radius: var(--border-radius-lg);
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.info-card-icon.danger {
+    background: var(--danger-color);
+}
+
+.info-card-title h3 {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-1);
+}
+
+.info-card-title p {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    margin-bottom: 0;
+}
+
+.info-card-body {
+    padding: var(--space-6);
+}
+
+/* Form Sections */
+.form-section {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: var(--space-6);
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.form-section-title {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-4);
+    display: flex;
+    align-items: center;
+    padding-bottom: var(--space-2);
+    border-bottom: 2px solid var(--primary-color);
 }
 
 .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--space-4);
 }
 
 .form-label {
     font-weight: 500;
-    color: var(--gray-700);
-    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    margin-bottom: var(--space-2);
     display: flex;
     align-items: center;
 }
 
 .form-control, .form-select {
-    border-radius: 0.5rem;
-    border: 1px solid var(--gray-300);
-    padding: 0.75rem 1rem;
-    transition: all 0.15s ease-in-out;
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+    padding: var(--space-3) var(--space-4);
+    transition: all var(--transition-fast);
+    font-size: var(--text-base);
 }
 
 .form-control:focus, .form-select:focus {
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.25);
+    box-shadow: 0 0 0 3px var(--primary-light);
+    outline: none;
+}
+
+/* Info Grid */
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
 }
 
 .info-item {
-    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
 }
 
 .info-label {
-    display: block;
+    display: flex;
+    align-items: center;
     font-weight: 600;
-    color: var(--gray-700);
-    margin-bottom: 0.5rem;
-    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .info-value {
+    font-size: var(--text-lg);
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+/* Form Actions */
+.form-actions {
+    margin-top: var(--space-6);
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border-color);
+}
+
+/* Action Buttons */
+.action-btn {
     display: flex;
     align-items: center;
-    font-size: 1rem;
-    color: var(--gray-900);
-}
-
-.info-value i {
-    font-size: 1.1rem;
-}
-
-/* Card improvements */
-.card {
-    border: none;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border-radius: 0.75rem;
-}
-
-.card-header {
-    background: var(--gray-50);
-    border-bottom: 1px solid var(--gray-200);
-    border-radius: 0.75rem 0.75rem 0 0 !important;
-    padding: 1.25rem 1.5rem;
-}
-
-.card-title {
+    justify-content: center;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--border-radius-lg);
     font-weight: 600;
-    color: var(--gray-800);
+    text-decoration: none;
+    transition: all var(--transition-fast);
+    border: 2px solid transparent;
+    min-height: 48px;
 }
 
-.card-body {
-    padding: 1.5rem;
+.action-btn.success {
+    background: var(--success-color);
+    color: var(--text-inverse);
+    border-color: var(--success-color);
 }
 
-/* Button improvements */
-.btn {
-    border-radius: 0.5rem;
-    font-weight: 500;
-    padding: 0.75rem 1.25rem;
+.action-btn.success:hover {
+    background: var(--success-hover);
+    border-color: var(--success-hover);
+    color: var(--text-inverse);
 }
 
-/* Responsive adjustments */
+.action-btn.danger {
+    background: var(--danger-color);
+    color: var(--text-inverse);
+    border-color: var(--danger-color);
+}
+
+.action-btn.danger:hover {
+    background: var(--danger-hover);
+    border-color: var(--danger-hover);
+    color: var(--text-inverse);
+}
+
+/* Badge Styles */
+.status-badge {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    padding: 0.375rem 0.75rem;
+    border-radius: var(--border-radius);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-badge.active {
+    background-color: #28a745;
+    color: white;
+}
+
+.status-badge.inactive {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
     .page-header {
-        margin: -2rem -1rem 0 -1rem;
-        padding: 2rem 0;
+        padding: var(--space-4);
     }
     
     .page-title {
-        font-size: 2rem;
+        font-size: var(--text-2xl);
     }
     
-    .card-body {
-        padding: 1rem;
-    }
-    
-    .info-item {
-        margin-bottom: 1rem;
+    .page-subtitle {
+        font-size: var(--text-base);
     }
     
     .btn-group {
@@ -352,13 +539,57 @@
     }
     
     .btn-group .btn {
-        border-radius: 0.5rem !important;
-        margin-bottom: 0.5rem;
+        border-radius: var(--border-radius) !important;
+        margin-bottom: var(--space-2);
     }
     
     .btn-group .btn:last-child {
         margin-bottom: 0;
     }
+    
+    .info-card-header {
+        padding: var(--space-4);
+        flex-direction: column;
+        text-align: center;
+        gap: var(--space-3);
+    }
+    
+    .info-card-body {
+        padding: var(--space-4);
+    }
+    
+    .info-grid {
+        gap: var(--space-4);
+    }
+    
+    .form-section {
+        padding-bottom: var(--space-4);
+    }
+    
+    .form-section-title {
+        font-size: var(--text-base);
+    }
 }
+
+/* Animation for cards */
+.info-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Stagger animation for multiple cards */
+.info-card:nth-child(1) { animation-delay: 0.1s; }
+.info-card:nth-child(2) { animation-delay: 0.2s; }
+.info-card:nth-child(3) { animation-delay: 0.3s; }
 </style>
 {% endblock %}
